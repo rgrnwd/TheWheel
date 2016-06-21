@@ -1,4 +1,4 @@
-<!doctype html>
+<!-- <!doctype html> -->
 <html>
   <head>
     <title>react webpack - example</title>
@@ -9,7 +9,8 @@
 
     <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
     
-    <link rel="stylesheet" type="text/css" href="/public/style.css" />
+    <!-- <link rel="stylesheet" type="text/css" href="/public/style.css" /> -->
+    <link rel="stylesheet" type="text/css" href="/public/styles/wheel.css" />
 
   </head>
 
@@ -18,7 +19,14 @@
     </div>
 
     <script src="/public/bundle.js"></script>
+    <!-- <script src="/src/index.js"></script> -->
+    <!-- <script src="/src/wheel.js"></script> -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p2.js/0.6.0/p2.min.js"></script>
 
+    <div id="container" class="centered">
+        <canvas id="drawing_canvas"></canvas>
+        <div id="status_label">loading...</div>
+    </div>
   </body>
 
 </html>
