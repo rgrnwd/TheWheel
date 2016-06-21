@@ -1,5 +1,3 @@
-<<<<<<< f43b1036437683fed0a33c20734e33cfbdc5936c
-hello!
 =======
 ## react-webpack-example
 
@@ -23,12 +21,4 @@ npm start
 open http://127.0.0.1:3000
 ```
 
-![](images/react.png)
-![](images/cssmodules.png)
-![](images/skeleton.png)
-![](images/webpack.png)
 
-## License
-
-[MIT](http://isekivacenz.mit-license.org/)
->>>>>>> initial commit
