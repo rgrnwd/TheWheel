@@ -58,7 +58,7 @@ function drawRouletteWheel() {
 
         ctx.strokeStyle = "black";
         ctx.lineWidth = 1;
-        ctx.font = 'bold 16px Helvetica, Arial';
+        ctx.font = '18px Helvetica, Arial';
 
         for(var i = 0; i < colors.length; i++) {
             var angle = startAngle + i * arc;
@@ -70,8 +70,8 @@ function drawRouletteWheel() {
             ctx.fill();
             ctx.save();
 
-            ctx.shadowOffsetX = -1;
-            ctx.shadowOffsetY = -1;
+            ctx.shadowOffsetX = -0.5;
+            ctx.shadowOffsetY = -0.5;
             ctx.shadowBlur    = 0;
             ctx.shadowColor   = "rgb(220,220,220)";
             ctx.fillStyle = "black";
