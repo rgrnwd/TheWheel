@@ -86,14 +86,10 @@ function drawRouletteWheel() {
         //Arrow
         ctx.fillStyle = "black";
         ctx.beginPath();
-        ctx.moveTo(physicsCenterX - 16, physicsCenterY - (outsideRadius + 20));
-        ctx.lineTo(physicsCenterX + 16, physicsCenterY - (outsideRadius + 20));
-        ctx.lineTo(physicsCenterX + 16, physicsCenterY - (outsideRadius - 20));
-        ctx.lineTo(physicsCenterX + 36, physicsCenterY - (outsideRadius - 20));
-        ctx.lineTo(physicsCenterX + 0, physicsCenterY - (outsideRadius - 52));
-        ctx.lineTo(physicsCenterX - 36, physicsCenterY - (outsideRadius - 20));
-        ctx.lineTo(physicsCenterX - 16, physicsCenterY - (outsideRadius - 20));
-        ctx.lineTo(physicsCenterX - 16, physicsCenterY - (outsideRadius + 20));
+        ctx.lineTo(physicsCenterX - 10, physicsCenterY - (outsideRadius + 10));
+        ctx.lineTo(physicsCenterX + 10, physicsCenterY - (outsideRadius + 10));
+        ctx.lineTo(physicsCenterX + 0, physicsCenterY - (outsideRadius - 25));
+        ctx.lineTo(physicsCenterX - 10, physicsCenterY - (outsideRadius + 10));
         ctx.fill();
     }
 }
