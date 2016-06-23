@@ -114,15 +114,14 @@ function distanceBetweenPoints(start, end) {
 }
 
 function checkStartDrag(e) {
-    mouseStart = {
-        x: e.pageX,
-        y: e.pageY
-    };
-    mousePositions = [];
-    dragStarted = true;
-    dragStartTime = e.timeStamp;
-    if (wheelSpinning) {
-        wheelSpinning = false;
+    if (!wheelSpinning) {
+        mouseStart = {
+            x: e.pageX,
+            y: e.pageY
+        };
+        mousePositions = [];
+        dragStarted = true;
+        dragStartTime = e.timeStamp;
     }
 }
 
@@ -154,9 +153,7 @@ function checkEndDrag(e) {
         }
         spinTimeTotal = Math.ceil(distance * 20);
         if ((spinTimeTotal / 100) < speed) {
-            console.log('Gonna update spinTimeTotal', spinTimeTotal);
             spinTimeTotal += speed * (Math.random() + 1.5) * 100;
-            console.log('new spinTimeTotal', spinTimeTotal);
         }
         spin();
     }
@@ -165,8 +162,6 @@ function checkEndDrag(e) {
 function spin() {
     spinAngleStart = Math.random() * 10 + 10;
     spinTime = 0;
-    console.log(spinTimeTotal, speed);
-    console.log("spinAngleStart", spinAngleStart, speed, spinTimeTotal);
     rotateWheel();
 }
 
@@ -193,7 +188,6 @@ function stopRotateWheel() {
     var text = cuisines[index];
     ctx.fillText(text, 250 - ctx.measureText(text).width / 2, 250 + 10);
     ctx.restore();
-    console.log('wheel stopped');
     wheelSpinning = false;
 }
 
