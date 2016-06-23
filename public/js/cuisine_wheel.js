@@ -13,9 +13,9 @@ var cuisines = [
     "Indian",
     "Mediterranean",
     "French",
-    "Mexican",
+    "Latin",
     "Korean", 
-    "Malaysian", 
+    "Surprise!", 
     "Vietnamese", 
     "Thai"];
 
@@ -115,6 +115,7 @@ function distanceBetweenPoints(start, end) {
 
 function checkStartDrag(e) {
     if (!wheelSpinning) {
+        showCheer(true);
         mouseStart = {
             x: e.pageX,
             y: e.pageY
@@ -189,15 +190,46 @@ function stopRotateWheel() {
     ctx.save();
     var text = cuisines[index];
     var result = document.getElementById("lunch-result");
-    result.innerText = text + getEmotion();
+    result.innerText = text + getEmotion(text);
     result.className = "speech-bubble";
+    showCheer(false);
     wheelSpinning = false;
 
 }
 
-function getEmotion(){
+function showCheer(show){
 
-    return ', yay!!';
+    if (show){
+        document.getElementById("cheer-right").className = "cheerleader right ";
+        document.getElementById("cheer-left").className = "cheerleader left ";
+    }else{
+        document.getElementById("cheer-right").className = "cheerleader right hidden ";
+        document.getElementById("cheer-left").className = "cheerleader left hidden";
+    }
+
+}
+function getEmotion(cuisine){
+
+    if (cuisine==='Latin')
+        return ', fieta!!';
+    else if (cuisine==='Japanese')
+        return ', kampai!!';
+    else if (cuisine==='Surprise!')
+        return ', WOAH!!';
+    else if (cuisine==='Korean')
+        return ', Ah sssaa!';
+    else if (cuisine==='Indian')
+        return ', yummy!';
+    else if (cuisine==='Italian')
+        return ', (plz no pizza)';
+    else if (cuisine==='Healthy')
+        return ', yay salad!';
+    else if (cuisine==='American')
+        return ', dude!!';
+    else if (cuisine==='French')
+        return ', merde!!';
+    else
+        return ', woohoo!';
 }
 function easeOut(t, c, d) {
     var ts = (t/=d)*t;

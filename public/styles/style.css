@@ -12,6 +12,7 @@ body {
 
 #canvas {
   display: inline;
+  cursor:pointer;
 }
 
 .bee-marker{
@@ -20,6 +21,27 @@ body {
 	position:absolute;
 	left:49%;
 	top:150px;
+	cursor:pointer;
+}
+.bee-marker:hover{
+    transform: scale(1.1); 
+}
+.cheerleader.hidden{
+	visibility: hidden;
+}
+.cheerleader.right{
+	position:fixed;
+	top:50%;
+	left:80%;
+	height:30%;
+	width:15%;
+}
+.cheerleader.left{
+	position:fixed;
+	top:50%;
+	left:5%;
+	height:30%;
+	width:15%;
 }
 .speech-bubble.hidden {
 	visibility: hidden;
