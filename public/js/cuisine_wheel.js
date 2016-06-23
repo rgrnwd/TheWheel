@@ -85,8 +85,6 @@ function drawRouletteWheel() {
 
         //Arrow
         drawMarker(ctx);
-
-        ctx.fillStyle = "black";
     }
 }
 
@@ -190,9 +188,10 @@ function stopRotateWheel() {
     var arcd = arc * 180 / Math.PI;
     var index = Math.floor((360 - degrees % 360) / arcd);
     ctx.save();
-    ctx.font = 'bold 30px Helvetica, Arial';
-    var text = cuisines[index];
-    ctx.fillText(text, 250 - ctx.measureText(text).width / 2, 250 + 10);
+    ctx.fillStyle = "black";
+    ctx.font = '26px Helvetica, Arial';
+    var text = cuisines[index].toUpperCase();
+    ctx.fillText(text, physicsCenterX - ctx.measureText(text).width / 2, physicsCenterX + 10);
     ctx.restore();
     wheelSpinning = false;
 }
