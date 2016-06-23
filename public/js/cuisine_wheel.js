@@ -1,6 +1,6 @@
 var colors = ["#B8D430", "#3AB745", "#029990", "#3501CB",
     "#2E2C75", "#673A7E", "#CC0071", "#F80120",
-    "#F35B20", "#FB9A00", "#FFCC00", "#FEF200", "#DBFA7F"];
+    "#F35B20", "#FB9A00", "#FFCC00", "#FEF200", "#E4F52C"];
 
 var cuisines = [
     "American", 
@@ -8,13 +8,13 @@ var cuisines = [
     "Chinese", 
     "Healthy",
     "Italian", 
-    "Indian", 
-    "French", 
+    "Indian",
+    "Mediterranean",
+    "French",
     "Mexican",
     "Korean", 
     "Malaysian", 
     "Vietnamese", 
-    "Mediterranean", 
     "Thai"];
 
 var startAngle = 0;
@@ -26,7 +26,6 @@ var spinTime = 0;
 var speed = 30;
 const spinTimeTotal = 10000;
 
-var mouseBody;
 var ctx;
 var drawingCanvas;
 var ppm = 1; // pixels per meter
@@ -41,8 +40,6 @@ var wheelStopped = true;
 
 window.onload = function() {
     drawingCanvas = document.getElementById("canvas");
-    var spinButton = document.getElementById("spin");
-    spinButton.addEventListener('click', spin);
     drawRouletteWheel();
     addMouseDragDrop();
 };
