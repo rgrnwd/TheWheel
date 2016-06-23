@@ -1,5 +1,7 @@
-var colors = ["#B8D430", "#3AB745", "#029990", "#3501CB",
-    "#2E2C75", "#673A7E", "#CC0071", "#F80120",
+//https://dzone.com/articles/creating-roulette-wheel-using
+
+var colors = ["#B8D430", "#3AB745", "#029990", "#4202FA",
+    "#4340A8", "#81499E", "#CC0071", "#F80120",
     "#F35B20", "#FB9A00", "#FFCC00", "#FEF200", "#E4F52C"];
 
 var cuisines = [
@@ -24,7 +26,7 @@ var spinTimeout = null;
 var spinAngleStart = 10;
 var spinTime = 0;
 var speed = 30;
-const spinTimeTotal = 10000;
+var spinTimeTotal = 10000;
 
 var ctx;
 var drawingCanvas;
@@ -33,7 +35,12 @@ var canvasHeight = 600;
 var physicsCenterX = canvasWidth * 0.5;
 var physicsCenterY = canvasHeight * 0.5;
 var wheelSpinning = false;
-var wheelStopped = true;
+var mouseStart;
+var mouseEnd;
+var dragStarted = false;
+var mousePositions = [];
+var dragStartTime = 0;
+var dragEndTime = 0;
 
 window.onload = function() {
     drawingCanvas = document.getElementById("canvas");
@@ -93,22 +100,68 @@ function drawRouletteWheel() {
 
 function addMouseDragDrop(){
     drawingCanvas.addEventListener('mousedown', checkStartDrag);
+    drawingCanvas.addEventListener('mousemove', mouseMove);
     drawingCanvas.addEventListener('mouseup', checkEndDrag);
     drawingCanvas.addEventListener('mouseout', checkEndDrag);
 }
 
-function checkStartDrag(e) {
-
-    if (wheelSpinning === true) {
-        wheelSpinning = false;
-        wheelStopped = true;
+function mouseMove(e) {
+    if(dragStarted) {
+        mousePositions.push({x: e.pageX, y: e.pageY});
     }
 }
 
-function checkEndDrag(e) {
+function distanceBetweenPoints(start, end) {
+    var a = end.x - start.x;
+    var b = end.y - start.y;
+    return Math.sqrt( a*a + b*b );
+}
 
-    if (wheelSpinning === false && wheelStopped === true) {
-        speed = 20;
+function checkStartDrag(e) {
+    mouseStart = {
+        x: e.pageX,
+        y: e.pageY
+    };
+    mousePositions = [];
+    dragStarted = true;
+    dragStartTime = e.timeStamp;
+    if (wheelSpinning) {
+        wheelSpinning = false;
+    }
+}
+
+function distanceTravelled() {
+    var distance = 0;
+    mousePositions.forEach(function(mousePosition, index) {
+           if(index > 0) {
+               distance += distanceBetweenPoints(mousePositions[index-1],mousePosition);
+           }
+    });
+    return distance;
+}
+
+function checkEndDrag(e) {
+    if (dragStarted && !wheelSpinning) {
+        mouseEnd = {
+            x: e.pageX,
+            y: e.pageY
+        };
+        dragEndTime = e.timeStamp;
+        var distance = distanceTravelled();
+        var timeTaken = dragEndTime - dragStartTime;
+        speed = distance / timeTaken;
+        dragStarted = false;
+        speed = 10 / (speed*speed);
+
+        if (speed > 100) {
+            speed = 100 * (Math.random() + 0.5);
+        }
+        spinTimeTotal = Math.ceil(distance * 20);
+        if ((spinTimeTotal / 100) < speed) {
+            console.log('Gonna update spinTimeTotal', spinTimeTotal);
+            spinTimeTotal += speed * (Math.random() + 1.5) * 100;
+            console.log('new spinTimeTotal', spinTimeTotal);
+        }
         spin();
     }
 }
@@ -116,8 +169,8 @@ function checkEndDrag(e) {
 function spin() {
     spinAngleStart = Math.random() * 10 + 10;
     spinTime = 0;
-    wheelSpinning = true;
-    wheelStopped = false;
+    console.log(spinTimeTotal, speed);
+    console.log("spinAngleStart", spinAngleStart, speed, spinTimeTotal);
     rotateWheel();
 }
 
@@ -127,7 +180,8 @@ function rotateWheel() {
         stopRotateWheel();
         return;
     }
-    var spinAngle = spinAngleStart - easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
+    wheelSpinning = true;
+    var spinAngle = spinAngleStart - easeOut(spinTime, spinAngleStart, spinTimeTotal);
     startAngle += (spinAngle * Math.PI / 180);
     drawRouletteWheel();
     spinTimeout = setTimeout(rotateWheel, speed);
@@ -143,10 +197,12 @@ function stopRotateWheel() {
     var text = cuisines[index];
     ctx.fillText(text, 250 - ctx.measureText(text).width / 2, 250 + 10);
     ctx.restore();
+    console.log('wheel stopped');
+    wheelSpinning = false;
 }
 
-function easeOut(t, b, c, d) {
+function easeOut(t, c, d) {
     var ts = (t/=d)*t;
     var tc = ts*t;
-    return b+c*(tc + -3*ts + 3*t);
+    return c*(tc + -3*ts + 3*t);
 }
