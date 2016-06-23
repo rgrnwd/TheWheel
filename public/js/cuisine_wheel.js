@@ -28,13 +28,10 @@ const spinTimeTotal = 10000;
 
 var ctx;
 var drawingCanvas;
-var ppm = 1; // pixels per meter
 var canvasWidth = 600;
 var canvasHeight = 600;
-var physicsWidth = canvasWidth / ppm;
-var physicsHeight = canvasHeight / ppm;
-var physicsCenterX = physicsWidth * 0.5;
-var physicsCenterY = physicsHeight * 0.5;
+var physicsCenterX = canvasWidth * 0.5;
+var physicsCenterY = canvasHeight * 0.5;
 var wheelSpinning = false;
 var wheelStopped = true;
 
@@ -95,7 +92,6 @@ function drawRouletteWheel() {
 }
 
 function addMouseDragDrop(){
-
     drawingCanvas.addEventListener('mousedown', checkStartDrag);
     drawingCanvas.addEventListener('mouseup', checkEndDrag);
     drawingCanvas.addEventListener('mouseout', checkEndDrag);

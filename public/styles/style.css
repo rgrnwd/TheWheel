@@ -1,6 +1,15 @@
 body {
-  padding: 50px;
+  padding-top: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+.content {
+  width:100%;
+  text-align: center;
+}
+
+#canvas {
+  display: inline;
 }
 
 a {
