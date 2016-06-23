@@ -31,7 +31,7 @@ var spinTimeTotal = 10000;
 var ctx;
 var drawingCanvas;
 var canvasWidth = 600;
-var canvasHeight = 600;
+var canvasHeight = 700;
 var physicsCenterX = canvasWidth * 0.5;
 var physicsCenterY = canvasHeight * 0.5;
 var wheelSpinning = false;
@@ -84,16 +84,22 @@ function drawRouletteWheel() {
         }
 
         //Arrow
+        drawMarker(ctx);
+
         ctx.fillStyle = "black";
-        ctx.beginPath();
-        ctx.lineTo(physicsCenterX - 10, physicsCenterY - (outsideRadius + 10));
-        ctx.lineTo(physicsCenterX + 10, physicsCenterY - (outsideRadius + 10));
-        ctx.lineTo(physicsCenterX + 0, physicsCenterY - (outsideRadius - 25));
-        ctx.lineTo(physicsCenterX - 10, physicsCenterY - (outsideRadius + 10));
-        ctx.fill();
     }
 }
 
+function drawMarker(ctx){
+    var img = new Image;
+    
+    img.onload = function(){
+      ctx.drawImage(img,physicsCenterX - 10,0, 60, 80); // Or at whatever offset you like
+    };
+
+    img.src = '../images/bee.png';
+
+}
 function addMouseDragDrop(){
     drawingCanvas.addEventListener('mousedown', checkStartDrag);
     drawingCanvas.addEventListener('mousemove', mouseMove);
