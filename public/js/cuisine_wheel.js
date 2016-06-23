@@ -45,6 +45,7 @@ var dragEndTime = 0;
 window.onload = function() {
     drawingCanvas = document.getElementById("canvas");
     drawRouletteWheel();
+    //drawMarker();
     addMouseDragDrop();
 };
 function drawRouletteWheel() {
@@ -78,13 +79,12 @@ function drawRouletteWheel() {
             ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
             ctx.restore();
         }
-
-        //Arrow
-        drawMarker(ctx);
     }
 }
 
-function drawMarker(ctx){
+function drawMarker(){
+    ctx = drawingCanvas.getContext("2d");
+
     var img = new Image;
     
     img.onload = function(){
@@ -177,7 +177,7 @@ function rotateWheel() {
     drawRouletteWheel();
     spinTimeout = setTimeout(rotateWheel, speed);
     var result = document.getElementById("lunch-result");
-    result.innerText = "";
+    result.innerText = "Friday Yummy!";
     result.className = "speech-bubble hidden";
 }
 
@@ -187,11 +187,7 @@ function stopRotateWheel() {
     var arcd = arc * 180 / Math.PI;
     var index = Math.floor((360 - degrees % 360) / arcd);
     ctx.save();
-    // ctx.fillStyle = "black";
-    // ctx.font = '26px Helvetica, Arial';
     var text = cuisines[index];
-    // ctx.fillText(text, physicsCenterX - ctx.measureText(text).width / 2, physicsCenterX + 10);
-    // ctx.restore();
     var result = document.getElementById("lunch-result");
     result.innerText = text + getEmotion();
     result.className = "speech-bubble";
@@ -200,7 +196,7 @@ function stopRotateWheel() {
 }
 
 function getEmotion(){
-    
+
     return ', yay!!';
 }
 function easeOut(t, c, d) {
