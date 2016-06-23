@@ -58,7 +58,7 @@ function drawRouletteWheel() {
 
         ctx.strokeStyle = "black";
         ctx.lineWidth = 1;
-        ctx.font = '18px Helvetica, Arial';
+        ctx.font = '18px "Times New Roman", Times, serif';
 
         for(var i = 0; i < colors.length; i++) {
             var angle = startAngle + i * arc;
@@ -70,10 +70,6 @@ function drawRouletteWheel() {
             ctx.fill();
             ctx.save();
 
-            ctx.shadowOffsetX = -0.5;
-            ctx.shadowOffsetY = -0.5;
-            ctx.shadowBlur    = 0;
-            ctx.shadowColor   = "rgb(220,220,220)";
             ctx.fillStyle = "black";
             ctx.translate(physicsCenterX + Math.cos(angle + arc / 2) * textRadius,
                 physicsCenterY + Math.sin(angle + arc / 2) * textRadius); // text start point
@@ -193,7 +189,7 @@ function stopRotateWheel() {
     ctx.save();
     // ctx.fillStyle = "black";
     // ctx.font = '26px Helvetica, Arial';
-    var text = cuisines[index].toUpperCase();
+    var text = cuisines[index];
     // ctx.fillText(text, physicsCenterX - ctx.measureText(text).width / 2, physicsCenterX + 10);
     // ctx.restore();
     var result = document.getElementById("lunch-result");
