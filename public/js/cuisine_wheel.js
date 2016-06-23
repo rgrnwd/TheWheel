@@ -12,28 +12,35 @@ var spinTimeout = null;
 
 var spinAngleStart = 10;
 var spinTime = 0;
-var spinTimeTotal = 0;
+var speed = 30;
+const spinTimeTotal = 10000;
 
+var mouseBody;
 var ctx;
+var drawingCanvas;
+var ppm = 1; // pixels per meter
+var canvasWidth = 600;
+var canvasHeight = 600;
+var physicsWidth = canvasWidth / ppm;
+var physicsHeight = canvasHeight / ppm;
+var physicsCenterX = physicsWidth * 0.5;
+var physicsCenterY = physicsHeight * 0.5;
+var wheelSpinning = false;
+var wheelStopped = true;
 
 window.onload = function() {
+    drawingCanvas = document.getElementById("canvas");
     var spinButton = document.getElementById("spin");
     spinButton.addEventListener('click', spin);
     drawRouletteWheel();
+    addMouseDragDrop();
 };
-
 function drawRouletteWheel() {
-    var canvas = document.getElementById("canvas");
-    if (canvas.getContext) {
-        var canvasWidth = 600;
-        var canvasHeight = 600;
-        var centreX = canvasWidth/2;
-        var centreY = canvasHeight/2;
-
+    if (drawingCanvas.getContext) {
         var outsideRadius = (canvasWidth/2) - 20;
         var insideRadius = 0;
         var textRadius = outsideRadius - 60;
-        ctx = canvas.getContext("2d");
+        ctx = drawingCanvas.getContext("2d");
 
         ctx.clearRect(0,0,canvasWidth,canvasWidth);
 
@@ -46,8 +53,8 @@ function drawRouletteWheel() {
             ctx.fillStyle = colors[i];
 
             ctx.beginPath();
-            ctx.arc(centreX, centreY, outsideRadius, angle, angle + arc, false);
-            ctx.arc(centreX, centreY, insideRadius, angle + arc, angle, true);
+            ctx.arc(physicsCenterX, physicsCenterY, outsideRadius, angle, angle + arc, false);
+            ctx.arc(physicsCenterX, physicsCenterY, insideRadius, angle + arc, angle, true);
             ctx.fill();
             ctx.save();
 
@@ -56,8 +63,8 @@ function drawRouletteWheel() {
             ctx.shadowBlur    = 0;
             ctx.shadowColor   = "rgb(220,220,220)";
             ctx.fillStyle = "black";
-            ctx.translate(centreX + Math.cos(angle + arc / 2) * textRadius,
-                centreY + Math.sin(angle + arc / 2) * textRadius); // text start point
+            ctx.translate(physicsCenterX + Math.cos(angle + arc / 2) * textRadius,
+                physicsCenterY + Math.sin(angle + arc / 2) * textRadius); // text start point
             ctx.rotate(angle + arc / 2 + Math.PI / 2); //text rotation
             var text = cuisines[i];
             ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
@@ -67,27 +74,51 @@ function drawRouletteWheel() {
         //Arrow
         ctx.fillStyle = "black";
         ctx.beginPath();
-        ctx.moveTo(centreX - 16, centreY - (outsideRadius + 20));
-        ctx.lineTo(centreX + 16, centreY - (outsideRadius + 20));
-        ctx.lineTo(centreX + 16, centreY - (outsideRadius - 20));
-        ctx.lineTo(centreX + 36, centreY - (outsideRadius - 20));
-        ctx.lineTo(centreX + 0, centreY - (outsideRadius - 52));
-        ctx.lineTo(centreX - 36, centreY - (outsideRadius - 20));
-        ctx.lineTo(centreX - 16, centreY - (outsideRadius - 20));
-        ctx.lineTo(centreX - 16, centreY - (outsideRadius + 20));
+        ctx.moveTo(physicsCenterX - 16, physicsCenterY - (outsideRadius + 20));
+        ctx.lineTo(physicsCenterX + 16, physicsCenterY - (outsideRadius + 20));
+        ctx.lineTo(physicsCenterX + 16, physicsCenterY - (outsideRadius - 20));
+        ctx.lineTo(physicsCenterX + 36, physicsCenterY - (outsideRadius - 20));
+        ctx.lineTo(physicsCenterX + 0, physicsCenterY - (outsideRadius - 52));
+        ctx.lineTo(physicsCenterX - 36, physicsCenterY - (outsideRadius - 20));
+        ctx.lineTo(physicsCenterX - 16, physicsCenterY - (outsideRadius - 20));
+        ctx.lineTo(physicsCenterX - 16, physicsCenterY - (outsideRadius + 20));
         ctx.fill();
+    }
+}
+
+function addMouseDragDrop(){
+
+    drawingCanvas.addEventListener('mousedown', checkStartDrag);
+    drawingCanvas.addEventListener('mouseup', checkEndDrag);
+    drawingCanvas.addEventListener('mouseout', checkEndDrag);
+}
+
+function checkStartDrag(e) {
+
+    if (wheelSpinning === true) {
+        wheelSpinning = false;
+        wheelStopped = true;
+    }
+}
+
+function checkEndDrag(e) {
+
+    if (wheelSpinning === false && wheelStopped === true) {
+        speed = 20;
+        spin();
     }
 }
 
 function spin() {
     spinAngleStart = Math.random() * 10 + 10;
     spinTime = 0;
-    spinTimeTotal = 3000;
+    wheelSpinning = true;
+    wheelStopped = false;
     rotateWheel();
 }
 
 function rotateWheel() {
-    spinTime += 30;
+    spinTime += speed;
     if(spinTime >= spinTimeTotal) {
         stopRotateWheel();
         return;
@@ -95,7 +126,7 @@ function rotateWheel() {
     var spinAngle = spinAngleStart - easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
     startAngle += (spinAngle * Math.PI / 180);
     drawRouletteWheel();
-    spinTimeout = setTimeout(rotateWheel, 30);
+    spinTimeout = setTimeout(rotateWheel, speed);
 }
 
 function stopRotateWheel() {
