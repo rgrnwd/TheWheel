@@ -180,6 +180,9 @@ function rotateWheel() {
     startAngle += (spinAngle * Math.PI / 180);
     drawRouletteWheel();
     spinTimeout = setTimeout(rotateWheel, speed);
+    var result = document.getElementById("lunch-result");
+    result.innerText = "";
+    result.className = "speech-bubble hidden";
 }
 
 function stopRotateWheel() {
@@ -188,14 +191,22 @@ function stopRotateWheel() {
     var arcd = arc * 180 / Math.PI;
     var index = Math.floor((360 - degrees % 360) / arcd);
     ctx.save();
-    ctx.fillStyle = "black";
-    ctx.font = '26px Helvetica, Arial';
+    // ctx.fillStyle = "black";
+    // ctx.font = '26px Helvetica, Arial';
     var text = cuisines[index].toUpperCase();
-    ctx.fillText(text, physicsCenterX - ctx.measureText(text).width / 2, physicsCenterX + 10);
-    ctx.restore();
+    // ctx.fillText(text, physicsCenterX - ctx.measureText(text).width / 2, physicsCenterX + 10);
+    // ctx.restore();
+    var result = document.getElementById("lunch-result");
+    result.innerText = text + getEmotion();
+    result.className = "speech-bubble";
     wheelSpinning = false;
+
 }
 
+function getEmotion(){
+    
+    return ', yay!!';
+}
 function easeOut(t, c, d) {
     var ts = (t/=d)*t;
     var tc = ts*t;
