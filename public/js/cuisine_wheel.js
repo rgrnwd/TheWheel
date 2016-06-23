@@ -1,10 +1,21 @@
 var colors = ["#B8D430", "#3AB745", "#029990", "#3501CB",
     "#2E2C75", "#673A7E", "#CC0071", "#F80120",
-    "#F35B20", "#FB9A00", "#FFCC00", "#FEF200"];
+    "#F35B20", "#FB9A00", "#FFCC00", "#FEF200", "#DBFA7F"];
 
-var cuisines = ["American", "Japanese", "Chinese", "Mediterranean",
-    "Italian", "Indian", "Persian", "Mexican",
-    "Moroccan", "Oriental", "French", "Greek"];
+var cuisines = [
+    "American", 
+    "Japanese", 
+    "Chinese", 
+    "Healthy",
+    "Italian", 
+    "Indian", 
+    "French", 
+    "Mexican",
+    "Korean", 
+    "Malaysian", 
+    "Vietnamese", 
+    "Mediterranean", 
+    "Thai"];
 
 var startAngle = 0;
 var arc = Math.PI / (colors.length * 0.5);
