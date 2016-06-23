@@ -211,7 +211,7 @@ function showCheer(show){
 function getEmotion(cuisine){
 
     if (cuisine==='Latin')
-        return ', fieta!!';
+        return ', fiesta!!';
     else if (cuisine==='Japanese')
         return ', kampai!!';
     else if (cuisine==='Surprise!')
@@ -225,7 +225,7 @@ function getEmotion(cuisine){
     else if (cuisine==='Healthy')
         return ', yay salad!';
     else if (cuisine==='American')
-        return ', dude!!';
+        return 'o, dude!!';
     else if (cuisine==='French')
         return ', merde!!';
     else
