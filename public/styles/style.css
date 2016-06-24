@@ -1,5 +1,4 @@
 body {
-  padding-top: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   background: url("../images/background.jpg");
   background-size: cover;
@@ -54,7 +53,7 @@ body {
 	border: 1px;
     left: 20px;
     position: relative;
-    width: 200px;
+    width: 250px;
     padding: 20px 0px;
     margin: 1em 53% 30px;
     text-align: center;

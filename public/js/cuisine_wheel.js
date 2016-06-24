@@ -19,6 +19,18 @@ var cuisines = [
     "Vietnamese", 
     "Thai"];
 
+var emotions = {
+    'Latin': 'fiesta!!',
+    'Japanese': 'kampai!!',
+    'Surprise!': 'WOAH!!',
+    'Korean': 'Ah sssaa!',
+    'Indian': 'yummy!',
+    'Italian': '(plz no pizza)',
+    'Healthy': 'yay salad!',
+    'American': 'dude!!',
+    'French': 'merde!!'
+};
+
 var startAngle = 0;
 var arc = Math.PI / (colors.length * 0.5);
 var spinTimeout = null;
@@ -82,18 +94,6 @@ function drawRouletteWheel() {
     }
 }
 
-function drawMarker(){
-    ctx = drawingCanvas.getContext("2d");
-
-    var img = new Image;
-    
-    img.onload = function(){
-      ctx.drawImage(img,physicsCenterX - 10,0, 60, 80); // Or at whatever offset you like
-    };
-
-    img.src = '../images/bee.png';
-
-}
 function addMouseDragDrop(){
     drawingCanvas.addEventListener('mousedown', checkStartDrag);
     drawingCanvas.addEventListener('mousemove', mouseMove);
@@ -190,7 +190,7 @@ function stopRotateWheel() {
     ctx.save();
     var text = cuisines[index];
     var result = document.getElementById("lunch-result");
-    result.innerText = text + getEmotion(text);
+    result.innerText = text + ', ' + getEmotion(text);
     result.className = "speech-bubble";
     showCheer(false);
     wheelSpinning = false;
@@ -209,28 +209,9 @@ function showCheer(show){
 
 }
 function getEmotion(cuisine){
-
-    if (cuisine==='Latin')
-        return ', fiesta!!';
-    else if (cuisine==='Japanese')
-        return ', kampai!!';
-    else if (cuisine==='Surprise!')
-        return ', WOAH!!';
-    else if (cuisine==='Korean')
-        return ', Ah sssaa!';
-    else if (cuisine==='Indian')
-        return ', yummy!';
-    else if (cuisine==='Italian')
-        return ', (plz no pizza)';
-    else if (cuisine==='Healthy')
-        return ', yay salad!';
-    else if (cuisine==='American')
-        return 'o, dude!!';
-    else if (cuisine==='French')
-        return ', merde!!';
-    else
-        return ', woohoo!';
+    return emotions[cuisine] || 'woohoo!';
 }
+
 function easeOut(t, c, d) {
     var ts = (t/=d)*t;
     var tc = ts*t;
