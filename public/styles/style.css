@@ -3,6 +3,7 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   background: url("../images/background.jpg");
   background-size: cover;
+  margin: 10px 0px;
 }
 
 .content {
@@ -13,6 +14,7 @@ body {
 #canvas {
   display: inline;
   cursor:pointer;
+  margin-top: 50px;
 }
 
 .bee-marker{
@@ -20,11 +22,11 @@ body {
 	height:100px;
 	position:absolute;
 	left:49%;
-	top:150px;
+	top:90px;
 	cursor:pointer;
 }
 .bee-marker:hover{
-    transform: scale(1.1); 
+    transform: scale(1.1);
 }
 .cheerleader.hidden{
 	visibility: hidden;
@@ -47,7 +49,10 @@ body {
 	visibility: hidden;
 }
 .speech-bubble {
+    font-weight: bold;
+    font-size: 16px;
 	border: 1px;
+    left: 20px;
     position: relative;
     width: 200px;
     padding: 20px 0px;
@@ -70,7 +75,7 @@ body {
 .speech-bubble:before {
     content: "";
     position: absolute;
-    bottom: -20px;
+    bottom: -25px;
     left: 25px;
     width: 18px;
     height: 18px;
@@ -82,8 +87,8 @@ body {
 .speech-bubble:after {
     content: "";
     position: absolute;
-    bottom: -35px;
-    left: 15px;
+    bottom: -45px;
+    left: 5px;
     width: 13px;
     height: 13px;
     background: #f9d835;

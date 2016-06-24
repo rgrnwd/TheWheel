@@ -31,7 +31,7 @@ var spinTimeTotal = 10000;
 var ctx;
 var drawingCanvas;
 var canvasWidth = 600;
-var canvasHeight = 700;
+var canvasHeight = 600;
 var physicsCenterX = canvasWidth * 0.5;
 var physicsCenterY = canvasHeight * 0.5;
 var wheelSpinning = false;
