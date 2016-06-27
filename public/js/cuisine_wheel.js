@@ -1,23 +1,12 @@
 //https://dzone.com/articles/creating-roulette-wheel-using
 
+var http = require('http');
+
 var colors = ["#B8D430", "#3AB745", "#029990", "#4202FA",
     "#4340A8", "#81499E", "#CC0071", "#F80120",
     "#F35B20", "#FB9A00", "#FFCC00", "#FEF200", "#E4F52C"];
 
-var cuisines = [
-    "American", 
-    "Japanese", 
-    "Chinese", 
-    "Healthy",
-    "Italian", 
-    "Indian",
-    "Mediterranean",
-    "French",
-    "Latin",
-    "Korean", 
-    "Surprise!", 
-    "Vietnamese", 
-    "Thai"];
+var cuisines = [];
 
 var emotions = {
     'Latin': 'fiesta!!',
@@ -32,20 +21,17 @@ var emotions = {
 };
 
 var startAngle = 0;
-var arc = Math.PI / (cuisines.length * 0.5);
+var arc;
 var spinTimeout = null;
 
-var spinAngleStart = 10;
+var spinAngleStart;
 var spinTime = 0;
 var speed = 30;
 var spinTimeTotal = 10000;
 
 var ctx;
-var drawingCanvas;
 var canvasWidth = 600;
 var canvasHeight = 600;
-var physicsCenterX = canvasWidth * 0.5;
-var physicsCenterY = canvasHeight * 0.5;
 var wheelSpinning = false;
 var mouseStart;
 var mouseEnd;
@@ -59,15 +45,38 @@ module.exports = {
 };
 
 function init() {
-    drawingCanvas = document.getElementById("canvas");
+    getCuisines(initWheel);
+}
+
+function initWheel() {
+    arc = Math.PI / (cuisines.length * 0.5);
     drawRouletteWheel();
-    //drawMarker();
     addMouseDragDrop();
 }
 
+function getCuisines(callback) {
+    http.get('http://localhost:3000/cuisines', function(response) {
+        var responseStr = '';
+        response.on('data', function(data) {
+            responseStr += data;
+        });
+        response.on('end', function() {
+            var res = JSON.parse(responseStr);
+            res.forEach(function(cuisine) {
+                cuisines.push(cuisine.name);
+            });
+            callback();
+        });
+    });
+}
+
 function drawRouletteWheel() {
+    var drawingCanvas = document.getElementById("canvas");
+
     if (drawingCanvas.getContext) {
-        var outsideRadius = (canvasWidth/2) - 20;
+        var physicsCenterX = canvasWidth * 0.5;
+        var physicsCenterY = canvasHeight * 0.5;
+        var outsideRadius = (physicsCenterX) - 20;
         var insideRadius = 0;
         var textRadius = outsideRadius - 60;
         ctx = drawingCanvas.getContext("2d");
@@ -110,6 +119,7 @@ function drawHighlightedText(text, x, y) {
 }
 
 function addMouseDragDrop(){
+    var drawingCanvas = document.getElementById("canvas");
     drawingCanvas.addEventListener('mousedown', checkStartDrag);
     drawingCanvas.addEventListener('mousemove', mouseMove);
     drawingCanvas.addEventListener('mouseup', checkEndDrag);
@@ -135,7 +145,7 @@ function checkStartDrag(e) {
             x: e.pageX,
             y: e.pageY
         };
-        mousePositions = [];
+        mousePositions = [mouseStart];
         dragStarted = true;
         dragStartTime = e.timeStamp;
     }
