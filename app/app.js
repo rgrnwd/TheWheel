@@ -9,6 +9,7 @@ var debug = require('debug')('wheel:server');
 var http = require('http');
 var config = require('../config/config');
 var mongoose = require('mongoose');
+var cuisines = require('../db/cuisines');
 /**
  * Get port from environment and store in Express.
  */
@@ -22,6 +23,26 @@ var db = mongoose.connection;
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
+var CuisineSchema = mongoose.Schema({name: String}, {collection: 'Cuisines'});
+var cuisineModel = mongoose.model('cuisine', CuisineSchema);
+cuisineModel.find(function(err, cuisines) {
+  if(cuisines && cuisines.length > 0) {
+    cuisines.forEach(function(cuisine) {
+      console.log(cuisine.name);
+    });
+  }
+  else {
+    populateCuisines();
+  }
+});
+
+var populateCuisines = function() {
+  cuisines.cuisines.forEach(function(cuisine) {
+    new cuisineModel(cuisine).save(function(err, savedCuisine) {
+      if(err) console.error(err);
+    });
+  });
+};
 /**
  * Create HTTP server.
  */

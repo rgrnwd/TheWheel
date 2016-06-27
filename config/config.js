@@ -9,7 +9,7 @@ var config = {
       name: 'app'
     },
     port: process.env.PORT || 3000,
-    db: process.env.FW_MONGODB_URI || 'mongodb://localhost/app-dev'
+    db: process.env.FW_MONGODB_URI || 'mongodb://localhost/wheel-dev'
   },
 
   test: {
@@ -18,7 +18,7 @@ var config = {
       name: 'app'
     },
     port: process.env.PORT || 3000,
-    db: process.env.FW_MONGODB_URI || 'mongodb://localhost/app-test'
+    db: process.env.FW_MONGODB_URI || 'mongodb://localhost/wheel-test'
   },
 
   production: {
