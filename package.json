@@ -16,8 +16,10 @@
     "serve-favicon": "~2.3.0"
   },
   "devDependencies": {
+    "browserify": "^13.0.1",
     "chai": "^3.5.0",
     "grunt": "^1.0.1",
+    "grunt-browserify": "^5.0.0",
     "grunt-contrib-watch": "^1.0.0",
     "grunt-develop": "^0.4.0",
     "load-grunt-tasks": "^3.5.0",

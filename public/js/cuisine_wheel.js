@@ -54,12 +54,17 @@ var mousePositions = [];
 var dragStartTime = 0;
 var dragEndTime = 0;
 
-window.onload = function() {
+module.exports = {
+    init: init
+};
+
+function init() {
     drawingCanvas = document.getElementById("canvas");
     drawRouletteWheel();
     //drawMarker();
     addMouseDragDrop();
-};
+}
+
 function drawRouletteWheel() {
     if (drawingCanvas.getContext) {
         var outsideRadius = (canvasWidth/2) - 20;

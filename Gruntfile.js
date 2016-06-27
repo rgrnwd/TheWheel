@@ -12,6 +12,12 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        browserify: {
+            client: {
+                src: ['public/js/*.js'],
+                dest: 'public/main.js'
+            }
+        },
         develop: {
             server: {
                 file: 'app/app.js'
@@ -67,6 +73,7 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('build', [
+        'browserify',
         'develop'
     ]);
     grunt.registerTask('default', [
@@ -75,5 +82,7 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('test', 'mocha');
+
+    grunt.loadNpmTasks('grunt-browserify');
 
 };
