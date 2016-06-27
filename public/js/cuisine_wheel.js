@@ -41,14 +41,15 @@ var dragStartTime = 0;
 var dragEndTime = 0;
 
 module.exports = {
-    init: init
+    init: init,
+    getCuisines: getCuisines
 };
 
 function init() {
     getCuisines(initWheel);
 }
 
-function initWheel() {
+function initWheel(err, result) {
     arc = Math.PI / (cuisines.length * 0.5);
     drawRouletteWheel();
     addMouseDragDrop();
@@ -65,7 +66,7 @@ function getCuisines(callback) {
             res.forEach(function(cuisine) {
                 cuisines.push(cuisine.name);
             });
-            callback();
+            callback(null, cuisines);
         });
     });
 }
