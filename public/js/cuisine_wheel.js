@@ -71,7 +71,7 @@ function drawRouletteWheel() {
 
         ctx.strokeStyle = "black";
         ctx.lineWidth = 1;
-        ctx.font = '18px "Times New Roman", Times, serif';
+        ctx.font = '22px "Times New Roman", Times, serif';
 
         for(var i = 0; i < colors.length; i++) {
             var angle = startAngle + i * arc;
@@ -86,12 +86,20 @@ function drawRouletteWheel() {
             ctx.fillStyle = "black";
             ctx.translate(physicsCenterX + Math.cos(angle + arc / 2) * textRadius,
                 physicsCenterY + Math.sin(angle + arc / 2) * textRadius); // text start point
-            ctx.rotate(angle + arc / 2 + Math.PI / 2); //text rotation
-            var text = cuisines[i];
-            ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
+            ctx.rotate(angle + arc / 2); //text rotation
+            drawHighlightedText(cuisines[i], 35, 7);
             ctx.restore();
         }
     }
+}
+
+function drawHighlightedText(text, x, y) {
+    ctx.textAlign = "right";
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 3;
+    ctx.strokeText(text, x, y);
+    ctx.fillStyle = 'white';
+    ctx.fillText(text, x, y);
 }
 
 function addMouseDragDrop(){
