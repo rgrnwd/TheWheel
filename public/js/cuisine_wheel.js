@@ -70,8 +70,11 @@ function drawRouletteWheel() {
         ctx.clearRect(0,0,canvasWidth,canvasWidth);
 
         ctx.strokeStyle = "black";
-        ctx.lineWidth = 1;
-        ctx.font = '22px "Times New Roman", Times, serif';
+        ctx.textAlign = "right";
+        ctx.lineWidth = 2;
+        ctx.miterLimit = 1;
+
+        ctx.font = '22px arial';
 
         for(var i = 0; i < cuisines.length; i++) {
             var angle = startAngle + i * arc;
@@ -94,7 +97,6 @@ function drawRouletteWheel() {
 }
 
 function drawHighlightedText(text, x, y) {
-    ctx.textAlign = "right";
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 3;
     ctx.strokeText(text, x, y);
