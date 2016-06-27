@@ -32,7 +32,7 @@ var emotions = {
 };
 
 var startAngle = 0;
-var arc = Math.PI / (colors.length * 0.5);
+var arc = Math.PI / (cuisines.length * 0.5);
 var spinTimeout = null;
 
 var spinAngleStart = 10;
@@ -73,7 +73,7 @@ function drawRouletteWheel() {
         ctx.lineWidth = 1;
         ctx.font = '18px "Times New Roman", Times, serif';
 
-        for(var i = 0; i < colors.length; i++) {
+        for(var i = 0; i < cuisines.length; i++) {
             var angle = startAngle + i * arc;
             ctx.fillStyle = colors[i];
 
