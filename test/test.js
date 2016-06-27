@@ -1,4 +1,5 @@
 var assert = require('chai').assert;
+var wheel = require('../public/js/cuisine_wheel');
 
 describe('Should do something', function() {
 
@@ -9,9 +10,9 @@ describe('Should do something', function() {
       assert.equal(-1, [1,2,3].indexOf(0));
     });
 
-    it ('should be something', function(){
-    	assert.equal(1, 3-2);
-    })
+    // it ('should be something', function(){
+    // 	assert.isDefined(wheel);
+    // });
   });
 
 });
