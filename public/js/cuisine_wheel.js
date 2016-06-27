@@ -55,7 +55,7 @@ function initWheel() {
 }
 
 function getCuisines(callback) {
-    http.get('http://localhost:3000/cuisines', function(response) {
+    http.get('/cuisines', function(response) {
         var responseStr = '';
         response.on('data', function(data) {
             responseStr += data;
