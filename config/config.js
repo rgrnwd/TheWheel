@@ -27,7 +27,7 @@ var config = {
       name: 'app'
     },
     port: process.env.PORT || 3000,
-    db: process.env.FW_MONGODB_URI && process.env.FW_MONGODB_URI
+    db: process.env.FW_MONGODB_URI 
     
   }
 };
