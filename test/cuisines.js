@@ -7,7 +7,9 @@ var http = require('http');
 var wheel = require('../public/js/cuisine_wheel');
  
 describe('Cuisine Wheel', function() {
-	beforeEach(function() {
+
+	describe('getCuisines', function(){
+		beforeEach(function() {
 		this.request = sinon.stub(http, 'request');
 	});
  
@@ -33,7 +35,6 @@ describe('Cuisine Wheel', function() {
 	});
 
 	it('should handle empty list of cuisines', function(done) {
-
 		var response = new PassThrough();
 		response.write(JSON.stringify('[]'));
 		response.end();
@@ -47,5 +48,5 @@ describe('Cuisine Wheel', function() {
 			done();
 		});
 	});
-
+	})
 });
