@@ -7,10 +7,17 @@
 var app = require('../app');
 var debug = require('debug')('wheel:server');
 var http = require('http');
-
+var config = require('../config/config');
+var mongoose = require('mongoose');
 /**
  * Get port from environment and store in Express.
  */
+
+/** 
+* Connect to Mongodb
+*/
+mongoose.connect(config.db);
+var db = mongoose.connection;
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
