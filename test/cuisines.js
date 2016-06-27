@@ -6,7 +6,7 @@ var http = require('http');
  
 var wheel = require('../public/js/cuisine_wheel');
  
-describe('api', function() {
+describe('Cuisine Wheel', function() {
 	beforeEach(function() {
 		this.request = sinon.stub(http, 'request');
 	});
@@ -28,7 +28,22 @@ describe('api', function() {
 		wheel.getCuisines(function(err, result) {
 
 			assert.equal(3, result.length);
-			assert.equal("Cuisine1", result[0]);
+			done();
+		});
+	});
+
+	it('should handle empty list of cuisines', function(done) {
+
+		var response = new PassThrough();
+		response.write(JSON.stringify('[]'));
+		response.end();
+
+		var request = new PassThrough();
+	 
+		this.request.callsArgWith(1, response).returns(request);
+	 	console.log('here we go');
+		wheel.getCuisines(function(err, result) {
+			assert.equal(0, result.length);
 			done();
 		});
 	});

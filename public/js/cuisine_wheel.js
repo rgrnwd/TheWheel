@@ -56,16 +56,25 @@ function initWheel(err, result) {
 }
 
 function getCuisines(callback) {
+
     http.get('/cuisines', function(response) {
+        cuisines = []; // clear the existing list of cuisines
+
         var responseStr = '';
+        response.on('error', function(err) {
+            callback(err);
+        });
         response.on('data', function(data) {
             responseStr += data;
         });
         response.on('end', function() {
             var res = JSON.parse(responseStr);
-            res.forEach(function(cuisine) {
-                cuisines.push(cuisine.name);
-            });
+
+            if (res && Array.isArray(res)){
+                res.forEach(function(cuisine) {
+                    cuisines.push(cuisine.name);
+                });
+            }
             callback(null, cuisines);
         });
     });
