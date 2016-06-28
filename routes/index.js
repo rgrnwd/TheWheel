@@ -8,7 +8,7 @@ router.get('/cuisines', function(req, res) {
   var query = Cuisine.find();
   query.exec(function(err, docs) {
     res.json(docs.map(function(doc){
-      return {name: doc.name};
+      return {name: doc.name, emotion: doc.emotion, lastSelected: doc.lastSelected};
     }));
   });
 });

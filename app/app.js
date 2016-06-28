@@ -30,18 +30,15 @@ var CuisineSchema = mongoose.Schema({
 var cuisineModel = mongoose.model('cuisine', CuisineSchema);
 cuisineModel.find(function(err, cuisines) {
   if(cuisines && cuisines.length > 0) {
-    cuisines.forEach(function(cuisine) {
-      console.log(cuisine.name, cuisine.emotion);
-    });
-
+    
     // =========== ============ ============ ============
     // Un-comment this section to refresh cuisine list!
     // =========== ============ ============ ============
 
-    // cuisineModel.remove({}, function(err) { 
-    //    console.log('collection removed') 
-    //    populateCuisines();
-    // });
+    cuisineModel.remove({}, function(err) { 
+       console.log('collection removed') 
+       populateCuisines();
+    });
   }
   else {
     populateCuisines();

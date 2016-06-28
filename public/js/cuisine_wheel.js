@@ -5,10 +5,6 @@ var http = require('http');
 var cuisines = [];
 var colors = [];
 
-var emotions = {
-    'Indian': 'yummy!',
-};
-
 var startAngle = 0, spinAngleStart, spinTimeout = null, 
     spinTime = 0, speed, spinTimeTotal, wheelSpinning = false;
 var dragStarted = false, dragStartTime = 0, dragEndTime = 0;
@@ -86,9 +82,11 @@ function getCuisines(callback) {
 
                 if (res && Array.isArray(res)){
                     res.forEach(function(cuisine) {
-                        cuisines.push(cuisine.name);
+                        cuisines.push(cuisine);
                     });
                 }
+
+                console.log(cuisines);
                 callback(null, cuisines);
             });
         }else{
@@ -136,7 +134,7 @@ function drawRouletteWheel() {
             context.translate(physicsCenterX + Math.cos(angle + arc / 2) * textRadius,
                 physicsCenterY + Math.sin(angle + arc / 2) * textRadius); // text start point
             context.rotate(angle + arc / 2); //text rotation
-            drawHighlightedText(cuisines[i], 35, 7);
+            drawHighlightedText(cuisines[i].name, 35, 7);
             context.restore();
         }
     }
@@ -246,9 +244,9 @@ function stopRotateWheel() {
     var arcd = arc * 180 / Math.PI;
     var index = Math.floor((360 - degrees % 360) / arcd);
     context.save();
-    var text = cuisines[index];
+    var text = cuisines[index].name;
     var result = document.getElementById("lunch-result");
-    result.innerText = text + ', ' + getEmotion(text);
+    result.innerText = text + ', ' + cuisines[index].emotion; 
     result.className = "speech-bubble";
     showCheer(false);
     wheelSpinning = false;
@@ -263,9 +261,6 @@ function showCheer(show){
         document.getElementById("cheer-left").className = "cheerleader left hidden";
     }
 
-}
-function getEmotion(cuisine){
-    return emotions[cuisine] || 'woohoo!';
 }
 
 function easeOut(t, c, d) {
