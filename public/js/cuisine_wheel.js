@@ -39,33 +39,41 @@ function init() {
 }
 
 function initWheel(err, result) {
+    if (err){
+        console.log(err);
+        return;
+    }
+
     arc = Math.PI / (cuisines.length * 0.5);
     drawRouletteWheel();
     addMouseDragDrop();
 }
 
 function getCuisines(callback) {
-
     http.get('/cuisines', function(response) {
         cuisines = []; // clear the existing list of cuisines
 
-        var responseStr = '';
-        response.on('error', function(err) {
-            callback(err);
-        });
-        response.on('data', function(data) {
-            responseStr += data;
-        });
-        response.on('end', function() {
-            var res = JSON.parse(responseStr);
+        if (response.statusCode == 200){
+            var responseStr = '';
+            response.on('data', function(data) {
+                responseStr += data;
+            });
+            response.on('end', function() {
+                var res = JSON.parse(responseStr);
 
-            if (res && Array.isArray(res)){
-                res.forEach(function(cuisine) {
-                    cuisines.push(cuisine.name);
-                });
-            }
-            callback(null, cuisines);
-        });
+                if (res && Array.isArray(res)){
+                    res.forEach(function(cuisine) {
+                        cuisines.push(cuisine.name);
+                    });
+                }
+                callback(null, cuisines);
+            });
+        }else{
+            callback('Getting cuisines responded with error code: '
+                + response.statusCode 
+                + ': '
+                + response.statusMessage);
+        }
     });
 }
 
