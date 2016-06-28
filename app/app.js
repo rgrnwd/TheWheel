@@ -23,6 +23,7 @@ var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 var CuisineSchema = mongoose.Schema({
+    id: Number,
     name: String, 
     emotion: String, 
     lastSelected: Date}, 

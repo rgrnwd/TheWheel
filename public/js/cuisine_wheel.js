@@ -86,7 +86,6 @@ function getCuisines(callback) {
                     });
                 }
 
-                console.log(cuisines);
                 callback(null, cuisines);
             });
         }else{
@@ -244,12 +243,27 @@ function stopRotateWheel() {
     var arcd = arc * 180 / Math.PI;
     var index = Math.floor((360 - degrees % 360) / arcd);
     context.save();
-    var text = cuisines[index].name;
-    var result = document.getElementById("lunch-result");
-    result.innerText = text + ', ' + cuisines[index].emotion; 
-    result.className = "speech-bubble";
+    selectCuisine(cuisines[index]);
     showCheer(false);
     wheelSpinning = false;
+}
+
+function selectCuisine(cuisine){
+
+    var result = document.getElementById("lunch-result");
+    result.innerText = cuisine.name + ', ' + cuisine.emotion; 
+    result.className = "speech-bubble";
+
+    // var options = {
+    //     host: 'localhost',
+    //     path: '/cuisines/select/' + cuisine.id,
+    //     port: 3000,
+    //     method: 'POST'
+    // };
+
+    // http.request(options, function(response) {
+    //     console.log(response);
+    // });
 }
 
 function showCheer(show){
