@@ -18,7 +18,7 @@ var emotions = {
 };
 
 var startAngle = 0, spinAngleStart, spinTimeout = null, 
-    spinTime = 0, speed = 30, spinTimeTotal = 10000, wheelSpinning = false;
+    spinTime = 0, speed, spinTimeTotal, wheelSpinning = false;
 var dragStarted = false, dragStartTime = 0, dragEndTime = 0;
 
 var context;
@@ -59,17 +59,16 @@ function RGB2HTML(r, g, b) {
 function generateColors(numberOfColors)
 {
     colors = [];
-    var colorOffset = 0;
 
-    center = 128;
-    width = 127;
+    centerOfSinWave = 127;
+    deviationFromCenter = 128;
     frequency = Math.PI*2/numberOfColors;
 
     for (var i = 0; i < numberOfColors; ++i)
     {
-        red   = Math.sin(frequency*i+colorOffset + 0) * width + center;
-        green = Math.sin(frequency*i+colorOffset + 2) * width + center;
-        blue  = Math.sin(frequency*i+colorOffset + 4) * width + center;
+        red   = Math.sin(frequency*i + 0 * (Math.PI / 180)) * deviationFromCenter + centerOfSinWave;
+        green = Math.sin(frequency*i + 100 * (Math.PI / 180)) * deviationFromCenter + centerOfSinWave;
+        blue  = Math.sin(frequency*i + 200 * (Math.PI / 180)) * deviationFromCenter + centerOfSinWave;
 
         colors.push(RGB2HTML(parseInt(red), parseInt(green), parseInt(blue)));
     }
@@ -214,10 +213,13 @@ function checkEndDrag(e) {
         if (speed > 100) {
             speed = 100 * (Math.random() + 0.5);
         }
+
         spinTimeTotal = Math.ceil(distance * 20);
+
         if ((spinTimeTotal / 100) < speed) {
             spinTimeTotal += speed * (Math.random() + 1.5) * 100;
         }
+
         spin();
     }
 }
@@ -230,6 +232,7 @@ function spin() {
 
 function rotateWheel() {
     spinTime += speed;
+
     if(spinTime >= spinTimeTotal) {
         stopRotateWheel();
         return;
@@ -246,6 +249,7 @@ function rotateWheel() {
 
 function stopRotateWheel() {
     clearTimeout(spinTimeout);
+
     var degrees = startAngle * 180 / Math.PI + 90;
     var arcd = arc * 180 / Math.PI;
     var index = Math.floor((360 - degrees % 360) / arcd);
@@ -256,14 +260,12 @@ function stopRotateWheel() {
     result.className = "speech-bubble";
     showCheer(false);
     wheelSpinning = false;
-
 }
 
 function showCheer(show){
-
     if (show){
-        document.getElementById("cheer-right").className = "cheerleader right ";
-        document.getElementById("cheer-left").className = "cheerleader left ";
+        document.getElementById("cheer-right").className = "cheerleader right";
+        document.getElementById("cheer-left").className = "cheerleader left";
     }else{
         document.getElementById("cheer-right").className = "cheerleader right hidden ";
         document.getElementById("cheer-left").className = "cheerleader left hidden";
