@@ -13,6 +13,27 @@ router.get('/cuisines', function(req, res) {
   });
 });
 
+router.post('/cuisines/select/:cuisine', function(req, res) {
+  var selectedCuisine = req.params.cuisine;
+  console.log(selectedCuisine);
+  var Cuisine = mongoose.model('cuisine');
+  Cuisine.findById(selectedCuisine, function(err, cuisine) {
+    if (err) {
+      console.error(err);
+      res.status(400).end();
+    } else {
+      cuisine.lastSelected = new Date();
+      cuisine.save(function(err) {
+        if(err) {
+          console.error("Error saving cuisine", err);
+          res.status(500).end();
+        }
+      });
+      res.status(200).end();
+    }
+  });
+});
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index.html', { title: 'The Wheel' });
