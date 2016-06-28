@@ -18,7 +18,6 @@ var cuisines = require('../db/cuisines');
 * Connect to Mongodb
 */
 mongoose.connect(config.db);
-var db = mongoose.connection;
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
@@ -43,6 +42,7 @@ var populateCuisines = function() {
     });
   });
 };
+
 /**
  * Create HTTP server.
  */
