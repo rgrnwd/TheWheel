@@ -44,6 +44,13 @@ body {
 	height:30%;
 	width:15%;
 }
+.cheerleader.bottom{
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    left: 0;
+    text-align:  center;
+}
 .speech-bubble.hidden {
 	visibility: hidden;
 }

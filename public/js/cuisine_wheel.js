@@ -270,9 +270,11 @@ function showCheer(show){
     if (show){
         document.getElementById("cheer-right").className = "cheerleader right";
         document.getElementById("cheer-left").className = "cheerleader left";
+        document.getElementById("cheer-bottom").className = "cheerleader bottom";
     }else{
         document.getElementById("cheer-right").className = "cheerleader right hidden ";
         document.getElementById("cheer-left").className = "cheerleader left hidden";
+        document.getElementById("cheer-bottom").className = "cheerleader bottom hidden";
     }
 
 }
