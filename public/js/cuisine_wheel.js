@@ -85,7 +85,7 @@ function getCuisines(callback) {
                         cuisines.push(cuisine);
                     });
                 }
-
+console.log(cuisines);
                 callback(null, cuisines);
             });
         }else{
@@ -254,16 +254,19 @@ function selectCuisine(cuisine){
     result.innerText = cuisine.name + ', ' + cuisine.emotion; 
     result.className = "speech-bubble";
 
-    // var options = {
-    //     host: 'localhost',
-    //     path: '/cuisines/select/' + cuisine.id,
-    //     port: 3000,
-    //     method: 'POST'
-    // };
+    var options = {
+        hostname: 'localhost',
+        path: '/cuisines/select/' + cuisine.id,
+        port: 3000,
+        method: 'POST'
+    };
 
-    // http.request(options, function(response) {
-    //     console.log(response);
-    // });
+    console.log(cuisine.id);
+    var req = http.request(options, function(response) {
+        response.on('end', console.log);
+    });
+    req.on('error', console.log);
+    req.end();
 }
 
 function showCheer(show){
