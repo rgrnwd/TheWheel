@@ -6,15 +6,7 @@ var cuisines = [];
 var colors = [];
 
 var emotions = {
-    'Latin': 'fiesta!!',
-    'Japanese': 'kampai!!',
-    'Surprise!': 'WOAH!!',
-    'Korean': 'Ah sssaa!',
     'Indian': 'yummy!',
-    'Italian': '(plz no pizza)',
-    'Healthy': 'yay salad!',
-    'American': 'dude!!',
-    'French': 'merde!!'
 };
 
 var startAngle = 0, spinAngleStart, spinTimeout = null, 

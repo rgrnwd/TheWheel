@@ -22,13 +22,26 @@ mongoose.connect(config.db);
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-var CuisineSchema = mongoose.Schema({name: String}, {collection: 'Cuisines'});
+var CuisineSchema = mongoose.Schema({
+    name: String, 
+    emotion: String, 
+    lastSelected: Date}, 
+  {collection: 'Cuisines'});
 var cuisineModel = mongoose.model('cuisine', CuisineSchema);
 cuisineModel.find(function(err, cuisines) {
   if(cuisines && cuisines.length > 0) {
     cuisines.forEach(function(cuisine) {
-      console.log(cuisine.name);
+      console.log(cuisine.name, cuisine.emotion);
     });
+
+    // =========== ============ ============ ============
+    // Un-comment this section to refresh cuisine list!
+    // =========== ============ ============ ============
+
+    // cuisineModel.remove({}, function(err) { 
+    //    console.log('collection removed') 
+    //    populateCuisines();
+    // });
   }
   else {
     populateCuisines();
