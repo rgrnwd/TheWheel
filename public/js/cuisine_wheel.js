@@ -3,6 +3,7 @@
 var http = require('http');
 
 var cuisines = [];
+var colors = [];
 
 var emotions = {
     'Latin': 'fiesta!!',
@@ -16,8 +17,6 @@ var emotions = {
     'French': 'merde!!'
 };
 
-var colorsSelected = [];
-
 var startAngle = 0, spinAngleStart, spinTimeout = null, 
     spinTime = 0, speed = 30, spinTimeTotal = 10000, wheelSpinning = false;
 var dragStarted = false, dragStartTime = 0, dragEndTime = 0;
@@ -28,7 +27,8 @@ var mousePositions = [];
 
 module.exports = {
     init: init,
-    getCuisines: getCuisines
+    getCuisines: getCuisines,
+    generateColors: generateColors
 };
 
 function init() {
@@ -42,7 +42,7 @@ function initWheel(err, result) {
     }
 
     arc = Math.PI / (cuisines.length * 0.5);
-    generateColors(0);
+    generateColors(cuisines.length);
     drawRouletteWheel();
     addMouseDragDrop();
 };
@@ -56,27 +56,29 @@ function RGB2HTML(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
-function generateColors(phase)
+function generateColors(numberOfColors)
 {
-    if (phase == undefined) {
-        phase = 0;
-    }
+    colors = [];
+    var colorOffset = 0;
 
     center = 128;
     width = 127;
-    frequency = Math.PI*2/cuisines.length;
-    for (var i = 0; i < cuisines.length; ++i)
-    {
-        red   = Math.sin(frequency*i+phase + 0) * width + center;
-        green = Math.sin(frequency*i+phase + 2) * width + center;
-        blue  = Math.sin(frequency*i+phase + 4) * width + center;
+    frequency = Math.PI*2/numberOfColors;
 
-        colorsSelected[i] = RGB2HTML(parseInt(red), parseInt(green), parseInt(blue));
+    for (var i = 0; i < numberOfColors; ++i)
+    {
+        red   = Math.sin(frequency*i+colorOffset + 0) * width + center;
+        green = Math.sin(frequency*i+colorOffset + 2) * width + center;
+        blue  = Math.sin(frequency*i+colorOffset + 4) * width + center;
+
+        colors.push(RGB2HTML(parseInt(red), parseInt(green), parseInt(blue)));
     }
+
+    return colors;
 }
 
 function getColor(index) {
-    return colorsSelected[index];
+    return colors[index];
 }
 
 function getCuisines(callback) {
