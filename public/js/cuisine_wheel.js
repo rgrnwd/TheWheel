@@ -20,25 +20,14 @@ var emotions = {
     'French': 'merde!!'
 };
 
-var startAngle = 0;
+
+var startAngle = 0, spinAngleStart, spinTimeout = null, 
+    spinTime = 0, speed = 30, spinTimeTotal = 10000, wheelSpinning = false;
+var dragStarted = false, dragStartTime = 0, dragEndTime = 0;
+
+var context;
 var arc;
-var spinTimeout = null;
-
-var spinAngleStart;
-var spinTime = 0;
-var speed = 30;
-var spinTimeTotal = 10000;
-
-var ctx;
-var canvasWidth = 600;
-var canvasHeight = 600;
-var wheelSpinning = false;
-var mouseStart;
-var mouseEnd;
-var dragStarted = false;
 var mousePositions = [];
-var dragStartTime = 0;
-var dragEndTime = 0;
 
 module.exports = {
     init: init,
@@ -82,6 +71,8 @@ function getCuisines(callback) {
 
 function drawRouletteWheel() {
     var drawingCanvas = document.getElementById("canvas");
+    var canvasWidth = 600;
+    var canvasHeight = 600;
 
     if (drawingCanvas.getContext) {
         var physicsCenterX = canvasWidth * 0.5;
@@ -89,43 +80,43 @@ function drawRouletteWheel() {
         var outsideRadius = (physicsCenterX) - 20;
         var insideRadius = 0;
         var textRadius = outsideRadius - 60;
-        ctx = drawingCanvas.getContext("2d");
+        context = drawingCanvas.getContext("2d");
 
-        ctx.clearRect(0,0,canvasWidth,canvasWidth);
+        context.clearRect(0,0,canvasWidth,canvasWidth);
 
-        ctx.strokeStyle = "black";
-        ctx.textAlign = "right";
-        ctx.lineWidth = 2;
-        ctx.miterLimit = 1;
+        context.strokeStyle = "black";
+        context.textAlign = "right";
+        context.lineWidth = 2;
+        context.miterLimit = 1;
 
-        ctx.font = '22px arial';
+        context.font = '22px arial';
 
         for(var i = 0; i < cuisines.length; i++) {
             var angle = startAngle + i * arc;
-            ctx.fillStyle = colors[i];
+            context.fillStyle = colors[i];
 
-            ctx.beginPath();
-            ctx.arc(physicsCenterX, physicsCenterY, outsideRadius, angle, angle + arc, false);
-            ctx.arc(physicsCenterX, physicsCenterY, insideRadius, angle + arc, angle, true);
-            ctx.fill();
-            ctx.save();
+            context.beginPath();
+            context.arc(physicsCenterX, physicsCenterY, outsideRadius, angle, angle + arc, false);
+            context.arc(physicsCenterX, physicsCenterY, insideRadius, angle + arc, angle, true);
+            context.fill();
+            context.save();
 
-            ctx.fillStyle = "black";
-            ctx.translate(physicsCenterX + Math.cos(angle + arc / 2) * textRadius,
+            context.fillStyle = "black";
+            context.translate(physicsCenterX + Math.cos(angle + arc / 2) * textRadius,
                 physicsCenterY + Math.sin(angle + arc / 2) * textRadius); // text start point
-            ctx.rotate(angle + arc / 2); //text rotation
+            context.rotate(angle + arc / 2); //text rotation
             drawHighlightedText(cuisines[i], 35, 7);
-            ctx.restore();
+            context.restore();
         }
     }
 }
 
 function drawHighlightedText(text, x, y) {
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 3;
-    ctx.strokeText(text, x, y);
-    ctx.fillStyle = 'white';
-    ctx.fillText(text, x, y);
+    context.strokeStyle = 'black';
+    context.lineWidth = 3;
+    context.strokeText(text, x, y);
+    context.fillStyle = 'white';
+    context.fillText(text, x, y);
 }
 
 function addMouseDragDrop(){
@@ -151,7 +142,7 @@ function distanceBetweenPoints(start, end) {
 function checkStartDrag(e) {
     if (!wheelSpinning) {
         showCheer(true);
-        mouseStart = {
+        var mouseStart = {
             x: e.pageX,
             y: e.pageY
         };
@@ -173,10 +164,6 @@ function distanceTravelled() {
 
 function checkEndDrag(e) {
     if (dragStarted && !wheelSpinning) {
-        mouseEnd = {
-            x: e.pageX,
-            y: e.pageY
-        };
         dragEndTime = e.timeStamp;
         var distance = distanceTravelled();
         var timeTaken = dragEndTime - dragStartTime;
@@ -222,7 +209,7 @@ function stopRotateWheel() {
     var degrees = startAngle * 180 / Math.PI + 90;
     var arcd = arc * 180 / Math.PI;
     var index = Math.floor((360 - degrees % 360) / arcd);
-    ctx.save();
+    context.save();
     var text = cuisines[index];
     var result = document.getElementById("lunch-result");
     result.innerText = text + ', ' + getEmotion(text);
