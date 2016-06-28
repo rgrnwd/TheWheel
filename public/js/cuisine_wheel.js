@@ -1,23 +1,6 @@
 //https://dzone.com/articles/creating-roulette-wheel-using
 
-var colors = ["#B8D430", "#3AB745", "#029990", "#4202FA",
-    "#4340A8", "#81499E", "#CC0071", "#F80120",
-    "#F35B20", "#FB9A00", "#FFCC00", "#FEF200", "#E4F52C"];
-
-var cuisines = [
-    "American", 
-    "Japanese", 
-    "Chinese", 
-    "Healthy",
-    "Italian", 
-    "Indian",
-    "Mediterranean",
-    "French",
-    "Latin",
-    "Korean", 
-    "Surprise!", 
-    "Vietnamese", 
-    "Thai"];
+var cuisines = [];
 
 var emotions = {
     'Latin': 'fiesta!!',
@@ -30,6 +13,8 @@ var emotions = {
     'American': 'dude!!',
     'French': 'merde!!'
 };
+
+var colorsSelected = [];
 
 var startAngle = 0;
 var arc = Math.PI / (cuisines.length * 0.5);
@@ -56,10 +41,44 @@ var dragEndTime = 0;
 
 window.onload = function() {
     drawingCanvas = document.getElementById("canvas");
+    generateColors(0);
     drawRouletteWheel();
     //drawMarker();
     addMouseDragDrop();
 };
+
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+function RGB2HTML(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+function generateColors(phase)
+{
+    if (phase == undefined) {
+        phase = 0;
+    }
+
+    center = 128;
+    width = 127;
+    frequency = Math.PI*2/cuisines.length;
+    for (var i = 0; i < cuisines.length; ++i)
+    {
+        red   = Math.sin(frequency*i+phase + 0) * width + center;
+        green = Math.sin(frequency*i+phase + 2) * width + center;
+        blue  = Math.sin(frequency*i+phase + 4) * width + center;
+
+        colorsSelected[i] = RGB2HTML(parseInt(red), parseInt(green), parseInt(blue));
+    }
+}
+
+function getColor(index) {
+    return colorsSelected[index];
+}
+
 function drawRouletteWheel() {
     if (drawingCanvas.getContext) {
         var outsideRadius = (canvasWidth/2) - 20;
@@ -78,7 +97,7 @@ function drawRouletteWheel() {
 
         for(var i = 0; i < cuisines.length; i++) {
             var angle = startAngle + i * arc;
-            ctx.fillStyle = colors[i];
+            ctx.fillStyle = getColor(i);
 
             ctx.beginPath();
             ctx.arc(physicsCenterX, physicsCenterY, outsideRadius, angle, angle + arc, false);
