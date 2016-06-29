@@ -1,6 +1,6 @@
 //https://dzone.com/articles/creating-roulette-wheel-using
 
-var http = require('http');
+var service = require('./cuisine_service.js');
 
 var cuisines = [];
 var colors = [];
@@ -15,12 +15,11 @@ var mousePositions = [];
 
 module.exports = {
     init: init,
-    getCuisines: getCuisines,
     generateColors: generateColors
 };
 
 function init() {
-    getCuisines(initWheel);
+    service.getCuisines(initWheel);
 }
 
 function initWheel(err, result) {
@@ -66,34 +65,6 @@ function generateColors(numberOfColors)
 
 function getColor(index) {
     return colors[index];
-}
-
-function getCuisines(callback) {
-    http.get('/cuisines', function(response) {
-        cuisines = []; // clear the existing list of cuisines
-
-        if (response.statusCode == 200){
-            var responseStr = '';
-            response.on('data', function(data) {
-                responseStr += data;
-            });
-            response.on('end', function() {
-                var res = JSON.parse(responseStr);
-
-                if (res && Array.isArray(res)){
-                    res.forEach(function(cuisine) {
-                        cuisines.push(cuisine);
-                    });
-                }
-                callback(null, cuisines);
-            });
-        }else{
-            callback('Getting cuisines responded with error code: '
-                + response.statusCode 
-                + ': '
-                + response.statusMessage);
-        }
-    });
 }
 
 function drawRouletteWheel() {
