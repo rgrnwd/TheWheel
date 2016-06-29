@@ -85,7 +85,6 @@ function getCuisines(callback) {
                         cuisines.push(cuisine);
                     });
                 }
-console.log(cuisines);
                 callback(null, cuisines);
             });
         }else{
@@ -279,7 +278,6 @@ function showCheer(show){
         document.getElementById("cheer-left").className = "cheerleader left hidden";
         document.getElementById("cheer-bottom").className = "cheerleader bottom hidden";
     }
-
 }
 
 function easeOut(t, c, d) {
