@@ -1,68 +1,57 @@
 var assert = require('chai').assert;
+var requestPromise = require('request-promise');
 var sinon = require('sinon');
-var PassThrough = require('stream').PassThrough;
+require('sinon-as-promised');
 var http = require('http');
+var url = require('../public/js/url.js');
 var service = require('../public/js/cuisine_service.js');
 
 describe('Cuisine Service', function() {
+    beforeEach(function() {
+        this.request = sinon.stub(http, 'request');
+        sinon.stub(url, 'getBaseUrl').returns('http://somehost');
+    });
+
+    afterEach(function() {
+        http.request.restore();
+        url.getBaseUrl.restore();
+    });
 
     describe('getCuisines', function(){
-        beforeEach(function() {
-            this.request = sinon.stub(http, 'request');
-        });
 
-        afterEach(function() {
-            http.request.restore();
-        });
-
-        it('should get list of cuisines', function(done) {
-            var expected = [{"name": "Cuisine1"},{"name": "Cuisine2"},{"name": "Cuisine3"}];
-            var response = new PassThrough();
-            response.statusCode = 200;
-            response.write(JSON.stringify(expected));
-            response.end();
-
-            var request = new PassThrough();
-
-            this.request.callsArgWith(1, response).returns(request);
-
-            service.getCuisines(function(err, result) {
-
-                assert.equal(3, result.length);
-                done();
+        it('should call the correct api to retrieve cuisines', function() {
+            sinon.stub(requestPromise, 'get').withArgs({uri: 'http://somehost/cuisines', json: true}).resolves('result');
+            return service.getCuisines().then(function(result) {
+                assert.isTrue(result === 'result');
+                requestPromise.get.restore();
             });
         });
-
-        it('should handle empty list of cuisines', function(done) {
-            var response = new PassThrough();
-            response.write(JSON.stringify('[]'));
-            response.statusCode = 200;
-            response.end();
-
-            var request = new PassThrough();
-
-            this.request.callsArgWith(1, response).returns(request);
-            service.getCuisines(function(err, result) {
-                assert.equal(0, result.length);
-                done();
+        it('should return error if the request errors', function() {
+            sinon.stub(requestPromise, 'get').withArgs({uri: 'http://somehost/cuisines', json: true}).rejects('Something went wrong');
+            return service.getCuisines().catch(function(error) {
+                assert.isTrue(error.message === 'Something went wrong');
+                requestPromise.get.restore();
             });
         });
+    });
 
-        it('should handle error response', function(done) {
-            var response = new PassThrough();
-            response.statusCode = 400;
-            response.end();
+    describe('saveCuisineForTheWeek', function() {
+        var cuisineId = "1234567";
 
-            var request = new PassThrough();
+        it('should post data to the correct api', function() {
+            sinon.stub(requestPromise, 'post').withArgs({uri: 'http://somehost/cuisines/select/' + cuisineId}).resolves();
 
-            this.request.callsArgWith(1, response).returns(request);
-            service.getCuisines(function(err, result) {
-                assert.isDefined(err);
-                assert.include(err, 'error code: 400', 'error code handled');
-                done();
+            return service.saveCuisineForTheWeek({id: cuisineId}).then(function(result) {
+                assert.isUndefined(result);
+                requestPromise.post.restore();
             });
-
         });
-
-    })
+        it('should return error if the request errors', function() {
+            sinon.stub(requestPromise, 'post').withArgs({uri: 'http://somehost/cuisines/select/' + cuisineId}).rejects('Something went wrong');
+            return service.saveCuisineForTheWeek({id: cuisineId}).catch(function(error) {
+                assert.isTrue(error.message === 'Something went wrong');
+                requestPromise.post.restore();
+            });
+        });
+    });
 });

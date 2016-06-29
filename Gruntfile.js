@@ -18,6 +18,9 @@ module.exports = function (grunt) {
             }
         },
         browserify: {
+            options: {
+                ignore: ['cls-bluebird']
+            },
             client: {
                 src: ['public/js/*.js'],
                 dest: 'public/main.js'
@@ -105,6 +108,4 @@ module.exports = function (grunt) {
 
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-mocha-test');
-
-
 };

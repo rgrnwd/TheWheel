@@ -19,27 +19,27 @@ module.exports = {
 };
 
 function init() {
-    service.getCuisines(initWheel);
+    service.getCuisines().then(function(cuisines) {
+        initWheel(cuisines);
+    }).catch(function(error) {
+        console.log(error);
+    });
 }
 
-function initWheel(err, result) {
-    if (err){
-        console.log(err);
-        return;
-    }
+function initWheel(result) {
     cuisines = result;
     arc = Math.PI / (cuisines.length * 0.5);
     generateColors(cuisines.length);
     drawRouletteWheel();
     addMouseDragDrop();
-};
+}
 
 function componentToHex(c) {
     var hex = c.toString(16);
     return hex.length == 1 ? "0" + hex : hex;
 }
 
-function RGB2HTML(r, g, b) {
+function rgb2html(r, g, b) {
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
@@ -57,7 +57,7 @@ function generateColors(numberOfColors)
         green = Math.sin(frequency*i + 100 * (Math.PI / 180)) * deviationFromCenter + centerOfSinWave;
         blue  = Math.sin(frequency*i + 200 * (Math.PI / 180)) * deviationFromCenter + centerOfSinWave;
 
-        colors.push(RGB2HTML(parseInt(red), parseInt(green), parseInt(blue)));
+        colors.push(rgb2html(parseInt(red), parseInt(green), parseInt(blue)));
     }
 
     return colors;
@@ -208,35 +208,33 @@ function rotateWheel() {
 
 function stopRotateWheel() {
     clearTimeout(spinTimeout);
-
-    var degrees = startAngle * 180 / Math.PI + 90;
-    var arcd = arc * 180 / Math.PI;
-    var index = Math.floor((360 - degrees % 360) / arcd);
-    context.save();
-    selectCuisine(cuisines[index]);
+    var selectedIndex = getSelectedCuisineIndex();
+    showSelectedCuisine(selectedIndex);
+    saveCuisine(selectedIndex);
     showCheer(false);
     wheelSpinning = false;
 }
 
-function selectCuisine(cuisine){
+function getSelectedCuisineIndex() {
+    var degrees = startAngle * 180 / Math.PI + 90;
+    var arcd = arc * 180 / Math.PI;
+    return Math.floor((360 - degrees % 360) / arcd);
+}
 
-    var result = document.getElementById("lunch-result");
-    result.innerText = cuisine.name + ', ' + cuisine.emotion; 
-    result.className = "speech-bubble";
-
-    var options = {
-        hostname: 'localhost',
-        path: '/cuisines/select/' + cuisine.id,
-        port: 3000,
-        method: 'POST'
-    };
-
-    console.log(cuisine.id);
-    var req = http.request(options, function(response) {
-        response.on('end', console.log);
+function saveCuisine(index) {
+    var cuisine = cuisines[index];
+    service.saveCuisineForTheWeek(cuisine).then(function() {
+        console.log(cuisine.name, "saved as this week's choice");
+    }).catch(function(error) {
+        console.log(error);
     });
-    req.on('error', console.log);
-    req.end();
+}
+
+function showSelectedCuisine(index) {
+    var cuisine = cuisines[index];
+    var result = document.getElementById("lunch-result");
+    result.innerText = cuisine.name + ', ' + cuisine.emotion;
+    result.className = "speech-bubble";
 }
 
 function showCheer(show){

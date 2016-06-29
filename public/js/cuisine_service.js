@@ -1,34 +1,24 @@
 var http = require('http');
+var requestPromise = require('request-promise');
+var url = require('./url.js');
 
 module.exports = {
-    getCuisines: getCuisines
+    getCuisines: getCuisines,
+    saveCuisineForTheWeek: saveCuisineForTheWeek
 };
 
-function getCuisines(callback) {
-    http.get('/cuisines', function(response) {
-        cuisines = []; // clear the existing list of cuisines
-
-        if (response.statusCode == 200){
-            var responseStr = '';
-            response.on('data', function(data) {
-                responseStr += data;
-            });
-            response.on('end', function() {
-                var res = JSON.parse(responseStr);
-
-                if (res && Array.isArray(res)){
-                    res.forEach(function(cuisine) {
-                        cuisines.push(cuisine);
-                    });
-                }
-                callback(null, cuisines);
-            });
-        }else{
-            callback('Getting cuisines responded with error code: '
-                + response.statusCode
-                + ': '
-                + response.statusMessage);
-        }
-    });
+function getCuisines() {
+    var options = {
+        uri: url.getBaseUrl() + '/cuisines',
+        json: true
+    };
+    return requestPromise.get(options);
 }
 
+function saveCuisineForTheWeek(cuisine) {
+    var options = {
+        uri: url.getBaseUrl() + '/cuisines/select/' + cuisine.id
+    };
+
+    return requestPromise.post(options)
+}
