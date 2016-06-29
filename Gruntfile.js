@@ -12,6 +12,11 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        mochaTest: {
+            test: {
+                src: ['test/**/*.js']
+            }
+        },
         browserify: {
             client: {
                 src: ['public/js/*.js'],
@@ -90,13 +95,16 @@ module.exports = function (grunt) {
     ]);
     grunt.registerTask('default', [
         'build',
+        'test',
         'watch'
     ]);
 
-    grunt.registerTask('test', 'mocha');
+    grunt.registerTask('test', ['mochaTest']);
 
     grunt.registerTask('scss', ['sass']);
 
     grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-mocha-test');
+
 
 };
