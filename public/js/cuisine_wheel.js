@@ -27,7 +27,7 @@ function initWheel(err, result) {
         console.log(err);
         return;
     }
-
+    cuisines = result;
     arc = Math.PI / (cuisines.length * 0.5);
     generateColors(cuisines.length);
     drawRouletteWheel();
