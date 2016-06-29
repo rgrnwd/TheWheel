@@ -23,6 +23,16 @@ module.exports = function (grunt) {
                 file: 'app/app.js'
             }
         },
+        sass: {
+            options: {
+                sourceMap: true
+            },
+            dist: {
+                files: {
+                    'public/styles/main.css': 'public/styles/main.scss'
+                }
+            }
+        },
         watch: {
             options: {
                 nospawn: true,
@@ -39,8 +49,9 @@ module.exports = function (grunt) {
             },
             css: {
                 files: [
-                    'public/css/*.scss'
+                    'public/styles/*.scss'
                 ],
+                tasks: ['sass'],
                 options: {
                     livereload: reloadPort
                 }
@@ -74,6 +85,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('build', [
         'browserify',
+        'scss',
         'develop'
     ]);
     grunt.registerTask('default', [
@@ -82,6 +94,8 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('test', 'mocha');
+
+    grunt.registerTask('scss', ['sass']);
 
     grunt.loadNpmTasks('grunt-browserify');
 

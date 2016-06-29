@@ -1,0 +1,109 @@
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background: url("../images/background.jpg");
+  background-size: cover;
+  margin: 10px 0px;
+}
+
+.content {
+  width:100%;
+  text-align: center;
+}
+
+#canvas {
+  display: inline;
+  cursor:pointer;
+  margin-top: 50px;
+}
+
+.bee-marker{
+	width:70px;
+	height:100px;
+	position:absolute;
+	left:49%;
+	top:90px;
+	cursor:pointer;
+
+    &:hover{
+        transform: scale(1.1);
+    }
+}
+.cheerleader{
+    
+    position:fixed;
+
+    &.hidden{
+	   visibility: hidden;
+    }
+    &.right{
+        top:50%;
+        left:80%;
+        height:30%;
+        width:15%;
+    }
+    &.left{
+        top:50%;
+        left:5%;
+        height:30%;
+        width:15%;
+    }
+    &.bottom{
+        bottom: 0px;
+        width: 100%;
+        left: 0;
+        text-align:  center;
+    }
+}
+.speech-bubble {
+
+    &.hidden{
+        visibility: hidden;
+    }
+
+    font-weight: bold;
+    font-size: 16px;
+	border: 1px;
+    left: 20px;
+    position: relative;
+    width: 250px;
+    padding: 20px 0px;
+    margin: 1em 53% 30px;
+    text-align: center;
+    color: #000;
+    background: #f9d835;
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(#ffed26), to(#f9d835));
+    background: -moz-linear-gradient(#ffed26, #f9d835);
+    background: -o-linear-gradient(#ffed26, #f9d835);
+    background: linear-gradient(#ffed26, #f9d835);
+    -webkit-border-top-left-radius: 100%;
+    -webkit-border-top-right-radius: 100%;
+    -webkit-border-bottom-right-radius: 100%;
+    -webkit-border-bottom-left-radius: 100%;
+    -moz-border-radius: 100%;
+    border-radius: 100%;
+
+    &:before {
+        content: "";
+        position: absolute;
+        bottom: -25px;
+        left: 25px;
+        width: 18px;
+        height: 18px;
+        background: #f9d835;
+        -webkit-border-radius: 30px;
+        -moz-border-radius: 30px;
+        border-radius: 30px;
+    }
+    &:after {
+        content: "";
+        position: absolute;
+        bottom: -45px;
+        left: 5px;
+        width: 13px;
+        height: 13px;
+        background: #f9d835;
+        -webkit-border-radius: 15px;
+        -moz-border-radius: 15px;
+        border-radius: 15px;
+    }
+}
