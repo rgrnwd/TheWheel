@@ -40,8 +40,8 @@ function generateColors(numberOfColors)
 {
     var colors = [];
 
-    centerOfSinWave = 127;
-    deviationFromCenter = 128;
+    centerOfSinWave = 128;
+    deviationFromCenter = 127;
     frequency = Math.PI*2/numberOfColors;
 
     for (var i = 0; i < numberOfColors; ++i)
