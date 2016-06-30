@@ -1,28 +1,3 @@
-body {
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  background: url("../images/background.jpg");
-  background-size: cover;
-  margin: 10px 0px; }
-
-.content {
-  width: 100%;
-  text-align: center; }
-
-#canvas {
-  display: inline;
-  cursor: pointer;
-  margin-top: 40px; }
-
-.bee-marker {
-  width: 50px;
-  height: 70px;
-  position: absolute;
-  left: 49%;
-  top: 90px;
-  cursor: pointer; }
-  .bee-marker:hover {
-    transform: scale(1.1); }
-
 .cheerleader {
   position: fixed; }
   .cheerleader.hidden {
@@ -75,7 +50,10 @@ body {
     width: 18px;
     height: 18px;
     background: #f9d835;
-    -webkit-border-radius: 30px;
+    -webkit-border-top-left-radius: 30px;
+    -webkit-border-top-right-radius: 30px;
+    -webkit-border-bottom-right-radius: 30px;
+    -webkit-border-bottom-left-radius: 30px;
     -moz-border-radius: 30px;
     border-radius: 30px; }
   .speech-bubble:after {
@@ -86,8 +64,36 @@ body {
     width: 13px;
     height: 13px;
     background: #f9d835;
-    -webkit-border-radius: 15px;
+    -webkit-border-top-left-radius: 15px;
+    -webkit-border-top-right-radius: 15px;
+    -webkit-border-bottom-right-radius: 15px;
+    -webkit-border-bottom-left-radius: 15px;
     -moz-border-radius: 15px;
     border-radius: 15px; }
+
+.bee-marker {
+  width: 50px;
+  height: 70px;
+  position: absolute;
+  left: 49%;
+  top: 90px;
+  cursor: pointer; }
+  .bee-marker:hover {
+    transform: scale(1.1); }
+
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background: url("../images/background.jpg");
+  background-size: cover;
+  margin: 10px 0px; }
+
+.content {
+  width: 100%;
+  text-align: center; }
+
+#canvas {
+  display: inline;
+  cursor: pointer;
+  margin-top: 40px; }
 
 /*# sourceMappingURL=main.css.map */

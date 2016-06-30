@@ -1,0 +1,27 @@
+
+.cheerleader{
+    
+    position:fixed;
+
+    &.hidden{
+	   visibility: hidden;
+    }
+    &.right{
+        top:50%;
+        left:80%;
+        height:30%;
+        width:15%;
+    }
+    &.left{
+        top:50%;
+        left:5%;
+        height:30%;
+        width:15%;
+    }
+    &.bottom{
+        bottom: 0px;
+        width: 100%;
+        left: 0;
+        text-align:  center;
+    }
+}

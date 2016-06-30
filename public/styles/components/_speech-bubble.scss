@@ -1,0 +1,43 @@
+
+.speech-bubble {
+
+    &.hidden{
+        visibility: hidden;
+    }
+
+    font-weight: bold;
+    font-size: 16px;
+    border: 1px;
+    left: 0;
+    position: relative;
+    width: 250px;
+    padding: 15px 0px;
+    margin: 0 53% 30px;
+    text-align: center;
+    color: #000;
+    background: $yellow;
+
+    @include background-gradient($yellow, $yellow-secondary);
+    @include border-radius(100%);
+
+    &:before {
+        content: "";
+        position: absolute;
+        bottom: -20px;
+        left: 25px;
+        width: 18px;
+        height: 18px;
+        background: $yellow;
+        @include border-radius(30px);
+    }
+    &:after {
+        content: "";
+        position: absolute;
+        bottom: -35px;
+        left: 5px;
+        width: 13px;
+        height: 13px;
+        background: $yellow;
+        @include border-radius(15px);
+    }
+}
