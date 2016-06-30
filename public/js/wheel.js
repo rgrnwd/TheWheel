@@ -128,16 +128,13 @@ function rotateWheel(context, cuisines, colors, scaleFactor, options) {
         spinTimeTotal: options.spinTimeTotal,
         spinTime: spinTime
     };
+
     spinTimeout = setTimeout(function() {rotateWheel(context, cuisines, colors, scaleFactor, opts)}, options.speed);
 }
 
 function drawWheel(context, cuisines, colors) {
-    var totalWeight = 0;
+    var totalWeight = getTotalArcs(cuisines);
     var accumulatedWeight = 0;
-
-    for(var i = 0; i < cuisines.length; i++) {
-        totalWeight += cuisines[i].votes;
-    }
 
     var arc = Math.PI / (totalWeight * 0.5);
     var outsideRadius = (PhysicsCenter.X) - 20;
@@ -146,10 +143,9 @@ function drawWheel(context, cuisines, colors) {
     for(var i = 0; i < cuisines.length; i++) {
         var weighting = cuisines[i].votes;
         var angle = startAngle + arc * accumulatedWeight;
-        totalWeight += weighting;
+        accumulatedWeight += weighting;
 
         if (weighting > 0) {
-            console.log(weighting + " " + cuisines[i].name);
             drawSegment(context, colors[i], angle, arc * weighting, outsideRadius);
             drawText(context, cuisines[i].name, angle, arc * weighting, textRadius);
         }
@@ -168,7 +164,6 @@ function drawSegment(context, color, angle, arc, outsideRadius) {
 }
 
 function setCanvasSize(context, scaleFactor){
-
     var canvasWidth = 500 * scaleFactor;
     var canvasHeight = 500 * scaleFactor;
 
@@ -199,26 +194,43 @@ function stopRotateWheel(cuisines) {
 }
 
 function getSelectedCuisineIndex(cuisines) {
-    //Math.PI radians = 180 degrees
-    var totalVotes = 0;
-    var votesCounted = 0;
+    var arcStoppedWithin = getArcStoppedWithin(getTotalArcs(cuisines), startAngle);
+    return getIndexBasedOnArc(cuisines, arcStoppedWithin);
+}
+
+function getTotalArcs(cuisines) {
+    var totalArcs = 0;
 
     for(var i = 0; i < cuisines.length; i++) {
-        totalVotes += cuisines[i].votes;
+        totalArcs += cuisines[i].votes;
     }
 
-    var arc = (Math.PI * 2) / totalVotes;
+    return totalArcs;
+}
+
+function getArcStoppedWithin(totalArcs, startAngle) {
+    //Math.PI radians = 180 degrees
+    var arc = (Math.PI * 2) / totalArcs;
     var degrees = (startAngle * 180 / Math.PI + 90) % 360;
     var arcd = arc * 180 / Math.PI;
-    var result = Math.floor((360 - degrees) / arcd);
+    return Math.floor((360 - degrees) / arcd);
+}
+
+function getIndexBasedOnArc(cuisines, arcStoppedWithin) {
+    var accumulatedArcs = 0;
+
     for (var i = 0; i < cuisines.length; i++) {
-        if ((votesCounted  + cuisines[i].votes) < result) {
-            votesCounted += cuisines[i].votes;
-        } else {
-            return i;
+        if (cuisines[i].votes != 0) {
+            var upper = accumulatedArcs + cuisines[i].votes;
+            var lower = accumulatedArcs;
+
+            if (lower <= arcStoppedWithin && arcStoppedWithin < upper) {
+                return i;
+            } else {
+                accumulatedArcs += cuisines[i].votes;
+            } 
         }
     }
-    return cuisines.length - 1;
 }
 
 function easeOut(t, c, d) {
