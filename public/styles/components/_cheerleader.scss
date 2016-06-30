@@ -1,27 +1,20 @@
 
 .cheerleader{
     
-    position:fixed;
-
     &.hidden{
 	   visibility: hidden;
     }
     &.right{
-        top:50%;
-        left:80%;
-        height:30%;
-        width:15%;
+        @include position(fixed,50%, initial, 80%);
+        @include size(30%, 15%);
     }
     &.left{
-        top:50%;
-        left:5%;
-        height:30%;
-        width:15%;
+        @include position(fixed,50%,initial, 5%);
+        @include size(30%, 15%);
     }
     &.bottom{
-        bottom: 0px;
+        @include position(fixed,initial, 0, 0);
         width: 100%;
-        left: 0;
-        text-align:  center;
+        text-align: center;
     }
 }

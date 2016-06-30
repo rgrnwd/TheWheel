@@ -13,3 +13,18 @@
     -moz-border-radius: $radius;
     border-radius: $radius;
 }
+
+@mixin position($position, $top, $bottom, $left){
+    position: $position;
+    top: $top;
+    bottom: $bottom;
+    left: $left;    
+}
+@mixin size($height, $width){
+    height:$height;
+    width: $width;
+}
+@mixin square-size($size){
+    width: $size;
+    height:$size;
+}

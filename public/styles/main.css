@@ -1,35 +1,44 @@
-.cheerleader {
-  position: fixed; }
-  .cheerleader.hidden {
-    visibility: hidden; }
-  .cheerleader.right {
-    top: 50%;
-    left: 80%;
-    height: 30%;
-    width: 15%; }
-  .cheerleader.left {
-    top: 50%;
-    left: 5%;
-    height: 30%;
-    width: 15%; }
-  .cheerleader.bottom {
-    bottom: 0px;
-    width: 100%;
-    left: 0;
-    text-align: center; }
+.cheerleader.hidden {
+  visibility: hidden; }
+
+.cheerleader.right {
+  position: fixed;
+  top: 50%;
+  bottom: initial;
+  left: 80%;
+  height: 30%;
+  width: 15%; }
+
+.cheerleader.left {
+  position: fixed;
+  top: 50%;
+  bottom: initial;
+  left: 5%;
+  height: 30%;
+  width: 15%; }
+
+.cheerleader.bottom {
+  position: fixed;
+  top: initial;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center; }
 
 .speech-bubble {
+  color: #000;
+  background: #f9d835;
   font-weight: bold;
   font-size: 16px;
   border: 1px;
-  left: 0;
-  position: relative;
   width: 250px;
   padding: 15px 0px;
   margin: 0 53% 30px;
   text-align: center;
-  color: #000;
-  background: #f9d835;
+  position: relative;
+  top: initial;
+  bottom: initial;
+  left: 0;
   background: -webkit-gradient(linear, 0 0, 0 100%, from(#ffed26), to(#f9d835));
   background: -moz-linear-gradient(#ffed26, #f9d835);
   background: -o-linear-gradient(#ffed26, #f9d835);
@@ -44,12 +53,13 @@
     visibility: hidden; }
   .speech-bubble:before {
     content: "";
+    background: #f9d835;
     position: absolute;
+    top: initial;
     bottom: -20px;
     left: 25px;
     width: 18px;
     height: 18px;
-    background: #f9d835;
     -webkit-border-top-left-radius: 30px;
     -webkit-border-top-right-radius: 30px;
     -webkit-border-bottom-right-radius: 30px;
@@ -58,12 +68,13 @@
     border-radius: 30px; }
   .speech-bubble:after {
     content: "";
+    background: #f9d835;
     position: absolute;
+    top: initial;
     bottom: -35px;
     left: 5px;
     width: 13px;
     height: 13px;
-    background: #f9d835;
     -webkit-border-top-left-radius: 15px;
     -webkit-border-top-right-radius: 15px;
     -webkit-border-bottom-right-radius: 15px;
@@ -72,12 +83,13 @@
     border-radius: 15px; }
 
 .bee-marker {
-  width: 50px;
+  cursor: pointer;
   height: 70px;
+  width: 50px;
   position: absolute;
-  left: 49%;
   top: 90px;
-  cursor: pointer; }
+  bottom: initial;
+  left: 49%; }
   .bee-marker:hover {
     transform: scale(1.1); }
 
