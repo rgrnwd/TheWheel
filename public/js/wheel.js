@@ -132,30 +132,39 @@ function rotateWheel(context, cuisines, colors, scaleFactor, options) {
 }
 
 function drawWheel(context, cuisines, colors) {
-    var totalVotes = 0;
-    var votesCounted = 0;
+    var totalWeight = 0;
+    var accumulatedWeight = 0;
 
     for(var i = 0; i < cuisines.length; i++) {
-        totalVotes += cuisines[i].votes;
+        totalWeight += cuisines[i].votes;
     }
 
-    var arc = Math.PI / (totalVotes * 0.5);
+    var arc = Math.PI / (totalWeight * 0.5);
     var outsideRadius = (PhysicsCenter.X) - 20;
     var textRadius = outsideRadius - 60;
 
     for(var i = 0; i < cuisines.length; i++) {
-        var votes = cuisines[i].votes;
-        var angle = startAngle + (votesCounted * arc);
-        votesCounted += votes;
-        context.fillStyle = colors[i];
-        context.beginPath();
-        context.arc(PhysicsCenter.X, PhysicsCenter.Y, outsideRadius, angle, angle + (arc * votes), false);
-        context.arc(PhysicsCenter.X, PhysicsCenter.Y, 0, angle + (arc * votes), angle, true);
-        context.fill();
-        context.save();
-        drawText(context, cuisines[i].name, angle, arc * votes, textRadius);
+        var weighting = cuisines[i].votes;
+        var angle = startAngle + arc * accumulatedWeight;
+        totalWeight += weighting;
+
+        if (weighting > 0) {
+            console.log(weighting + " " + cuisines[i].name);
+            drawSegment(context, colors[i], angle, arc * weighting, outsideRadius);
+            drawText(context, cuisines[i].name, angle, arc * weighting, textRadius);
+        }
+
         context.restore();
     }
+}
+
+function drawSegment(context, color, angle, arc, outsideRadius) {
+    context.fillStyle = color;
+    context.beginPath();
+    context.arc(PhysicsCenter.X, PhysicsCenter.Y, outsideRadius, angle, angle + arc, false);
+    context.arc(PhysicsCenter.X, PhysicsCenter.Y, 0, angle + arc, angle, true);
+    context.fill();
+    context.save();
 }
 
 function setCanvasSize(context, scaleFactor){
