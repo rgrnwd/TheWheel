@@ -2,15 +2,10 @@
 
 var service = require('./cuisine_service.js');
 
-var cuisines = [];
-var colors = [];
-
-var startAngle = 0, spinAngleStart, spinTimeout = null, 
-    spinTime = 0, speed, spinTimeTotal, wheelSpinning = false;
+var spinTimeout = null, wheelSpinning = false;
 var dragStarted = false, dragStartTime = 0, dragEndTime = 0;
 
 var context;
-var arc;
 var mousePositions = [];
 
 module.exports = {
@@ -26,12 +21,10 @@ function init() {
     });
 }
 
-function initWheel(result) {
-    cuisines = result;
-    arc = Math.PI / (cuisines.length * 0.5);
-    generateColors(cuisines.length);
-    drawRouletteWheel();
-    addMouseDragDrop();
+function initWheel(cuisines) {
+    var colors = generateColors(cuisines.length);
+    drawRouletteWheel(0, cuisines, colors);
+    addMouseDragDrop(cuisines, colors);
 }
 
 function componentToHex(c) {
@@ -45,7 +38,7 @@ function rgb2html(r, g, b) {
 
 function generateColors(numberOfColors)
 {
-    colors = [];
+    var colors = [];
 
     centerOfSinWave = 127;
     deviationFromCenter = 128;
@@ -63,14 +56,11 @@ function generateColors(numberOfColors)
     return colors;
 }
 
-function getColor(index) {
-    return colors[index];
-}
-
-function drawRouletteWheel() {
+function drawRouletteWheel(startAngle, cuisines, colors) {
     var drawingCanvas = document.getElementById("canvas");
     var canvasWidth = 500;
     var canvasHeight = 500;
+    var arc = Math.PI / (cuisines.length * 0.5);
 
     if (drawingCanvas.getContext) {
         var physicsCenterX = canvasWidth * 0.5;
@@ -90,7 +80,7 @@ function drawRouletteWheel() {
 
         for(var i = 0; i < cuisines.length; i++) {
             var angle = startAngle + i * arc;
-            context.fillStyle = getColor(i);
+            context.fillStyle = colors[i];
 
             context.beginPath();
             context.arc(physicsCenterX, physicsCenterY, outsideRadius, angle, angle + arc, false);
@@ -116,12 +106,13 @@ function drawHighlightedText(text, x, y) {
     context.fillText(text, x, y);
 }
 
-function addMouseDragDrop(){
+function addMouseDragDrop(cuisines, colors){
+    var endMouseDragHandler = function(e) {checkEndDrag(e, cuisines, colors)};
     var drawingCanvas = document.getElementById("canvas");
     drawingCanvas.addEventListener('mousedown', checkStartDrag);
     drawingCanvas.addEventListener('mousemove', mouseMove);
-    drawingCanvas.addEventListener('mouseup', checkEndDrag);
-    drawingCanvas.addEventListener('mouseout', checkEndDrag);
+    drawingCanvas.addEventListener('mouseup', endMouseDragHandler);
+    drawingCanvas.addEventListener('mouseout', endMouseDragHandler);
 }
 
 function mouseMove(e) {
@@ -159,12 +150,12 @@ function distanceTravelled() {
     return distance;
 }
 
-function checkEndDrag(e) {
+function checkEndDrag(e, cuisines, colors) {
     if (dragStarted && !wheelSpinning) {
         dragEndTime = e.timeStamp;
         var distance = distanceTravelled();
         var timeTaken = dragEndTime - dragStartTime;
-        speed = distance / timeTaken;
+        var speed = distance / timeTaken;
         dragStarted = false;
         speed = 10 / (speed*speed);
 
@@ -172,56 +163,55 @@ function checkEndDrag(e) {
             speed = 100 * (Math.random() + 0.5);
         }
 
-        spinTimeTotal = Math.ceil(distance * 20);
+        var spinTimeTotal = Math.ceil(distance * 20);
 
         if ((spinTimeTotal / 100) < speed) {
             spinTimeTotal += speed * (Math.random() + 1.5) * 100;
         }
 
-        spin();
+        spin(0, cuisines, colors, speed, spinTimeTotal);
     }
 }
 
-function spin() {
-    spinAngleStart = Math.random() * 10 + 10;
-    spinTime = 0;
-    rotateWheel();
+function spin(startAngle, cuisines, colors, speed, spinTimeTotal) {
+    var spinAngleStart = Math.random() * 10 + 10;
+    rotateWheel(startAngle, cuisines, colors, spinAngleStart, 0, speed, spinTimeTotal);
 }
 
-function rotateWheel() {
+function rotateWheel(startAngle, cuisines, colors, spinAngleStart, spinTime, speed, spinTimeTotal) {
     spinTime += speed;
 
     if(spinTime >= spinTimeTotal) {
-        stopRotateWheel();
+        stopRotateWheel(startAngle, cuisines);
         return;
     }
     wheelSpinning = true;
     var spinAngle = spinAngleStart - easeOut(spinTime, spinAngleStart, spinTimeTotal);
     startAngle += (spinAngle * Math.PI / 180);
-    drawRouletteWheel();
-    spinTimeout = setTimeout(rotateWheel, speed);
+    drawRouletteWheel(startAngle, cuisines, colors);
+    spinTimeout = setTimeout(function() {rotateWheel(startAngle, cuisines, colors, spinAngleStart, spinTime, speed, spinTimeTotal);}, speed);
     var result = document.getElementById("lunch-result");
     result.innerText = "Friday Yummy!";
     result.className = "speech-bubble hidden";
 }
 
-function stopRotateWheel() {
+function stopRotateWheel(startAngle, cuisines) {
     clearTimeout(spinTimeout);
-    var selectedIndex = getSelectedCuisineIndex();
-    showSelectedCuisine(selectedIndex);
-    saveCuisine(selectedIndex);
+    var selectedIndex = getSelectedCuisineIndex(startAngle, cuisines);
+    showSelectedCuisine(cuisines[selectedIndex]);
+    saveCuisine(cuisines[selectedIndex]);
     showCheer(false);
     wheelSpinning = false;
 }
 
-function getSelectedCuisineIndex() {
+function getSelectedCuisineIndex(startAngle, cuisines) {
+    var arc = Math.PI / (cuisines.length * 0.5);
     var degrees = startAngle * 180 / Math.PI + 90;
     var arcd = arc * 180 / Math.PI;
     return Math.floor((360 - degrees % 360) / arcd);
 }
 
-function saveCuisine(index) {
-    var cuisine = cuisines[index];
+function saveCuisine(cuisine) {
     service.saveCuisineForTheWeek(cuisine).then(function() {
         console.log(cuisine.name, "saved as this week's choice");
     }).catch(function(error) {
@@ -229,8 +219,7 @@ function saveCuisine(index) {
     });
 }
 
-function showSelectedCuisine(index) {
-    var cuisine = cuisines[index];
+function showSelectedCuisine(cuisine) {
     var result = document.getElementById("lunch-result");
     result.innerText = cuisine.name + ', ' + cuisine.emotion;
     result.className = "speech-bubble";
