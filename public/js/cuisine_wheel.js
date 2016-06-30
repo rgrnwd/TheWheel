@@ -1,11 +1,10 @@
-//https://dzone.com/articles/creating-roulette-wheel-using
-
 var service = require('./cuisine_service.js');
 
 var spinTimeout = null, wheelSpinning = false;
 var dragStarted = false, dragStartTime = 0, dragEndTime = 0;
 
-var context;
+var context, drawingCanvas;
+var arc;
 var mousePositions = [];
 
 module.exports = {
@@ -23,6 +22,11 @@ function init() {
 
 function initWheel(cuisines) {
     var colors = generateColors(cuisines.length);
+    drawingCanvas = document.getElementById("canvas");
+    if (drawingCanvas.getContext) {
+        context = drawingCanvas.getContext("2d");
+        setContextStyle('22');
+    }
     drawRouletteWheel(0, cuisines, colors);
     addMouseDragDrop(cuisines, colors);
 }
@@ -57,45 +61,50 @@ function generateColors(numberOfColors)
 }
 
 function drawRouletteWheel(startAngle, cuisines, colors) {
-    var drawingCanvas = document.getElementById("canvas");
     var canvasWidth = 500;
     var canvasHeight = 500;
     var arc = Math.PI / (cuisines.length * 0.5);
 
-    if (drawingCanvas.getContext) {
-        var physicsCenterX = canvasWidth * 0.5;
-        var physicsCenterY = canvasHeight * 0.5;
-        var outsideRadius = (physicsCenterX) - 20;
-        var textRadius = outsideRadius - 60;
-        context = drawingCanvas.getContext("2d");
+    var physicsCenterX = canvasWidth * 0.5;
+    var physicsCenterY = canvasHeight * 0.5;
+    var outsideRadius = (physicsCenterX) - 20;
+    var textRadius = outsideRadius - 60;
 
-        context.clearRect(0,0,canvasWidth,canvasWidth);
+    context.clearRect(0,0,canvasWidth,canvasWidth);
 
-        context.strokeStyle = "black";
-        context.textAlign = "right";
-        context.lineWidth = 2;
-        context.miterLimit = 1;
+    for(var i = 0; i < cuisines.length; i++) {
+        var angle = startAngle + i * arc;
+        context.fillStyle = colors[i];
 
-        context.font = '22px arial';
-
-        for(var i = 0; i < cuisines.length; i++) {
-            var angle = startAngle + i * arc;
-            context.fillStyle = colors[i];
-
-            context.beginPath();
-            context.arc(physicsCenterX, physicsCenterY, outsideRadius, angle, angle + arc, false);
-            context.arc(physicsCenterX, physicsCenterY, 0, angle + arc, angle, true);
-            context.fill();
-            context.save();
-
-            context.fillStyle = "black";
-            context.translate(physicsCenterX + Math.cos(angle + arc / 2) * textRadius,
-                physicsCenterY + Math.sin(angle + arc / 2) * textRadius); // text start point
-            context.rotate(angle + arc / 2); //text rotation
-            drawHighlightedText(cuisines[i].name, 35, 7);
-            context.restore();
-        }
+        context.beginPath();
+        context.arc(physicsCenterX, physicsCenterY, outsideRadius, angle, angle + arc, false);
+        context.arc(physicsCenterX, physicsCenterY, 0, angle + arc, angle, true);
+        context.fill();
+        context.save();
+        drawText(cuisines[i].name, physicsCenterX, physicsCenterY, angle, arc, textRadius);
+        context.restore();
     }
+}
+
+function drawText(text, physicsCenterX, physicsCenterY, angle, arc, textRadius){
+
+    var angleArc = angle + arc / 2;
+    var cos = Math.cos(angleArc);
+    var sin = Math.sin(angleArc);
+    var startPointX = physicsCenterX + cos * textRadius;
+    var startPointY = physicsCenterY + sin * textRadius;
+    context.translate(startPointX, startPointY); 
+    context.rotate(angleArc); 
+    drawHighlightedText(text, 35, 7);
+}
+
+function setContextStyle(fontSize){
+
+    context.strokeStyle = "black";
+    context.textAlign = "right";
+    context.lineWidth = 2;
+    context.miterLimit = 1;
+    context.font = fontSize + 'px arial';
 }
 
 function drawHighlightedText(text, x, y) {
@@ -108,7 +117,6 @@ function drawHighlightedText(text, x, y) {
 
 function addMouseDragDrop(cuisines, colors){
     var endMouseDragHandler = function(e) {checkEndDrag(e, cuisines, colors)};
-    var drawingCanvas = document.getElementById("canvas");
     drawingCanvas.addEventListener('mousedown', checkStartDrag);
     drawingCanvas.addEventListener('mousemove', mouseMove);
     drawingCanvas.addEventListener('mouseup', endMouseDragHandler);
