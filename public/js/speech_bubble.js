@@ -5,7 +5,7 @@ module.exports = {
 
 function hideSpeechBubble() {
     var result = document.getElementById("lunch-result");
-    result.innerText = " ";
+    result.innerText = "Friday, yummy!";
     result.className = "speech-bubble hidden";
 }
 

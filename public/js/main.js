@@ -1,6 +1,7 @@
 var service = require('./service.js');
 var wheel = require('./wheel.js');
 var colors = require('./colors.js');
+var speechBubble = require('./speech_bubble.js');
 
 var scaleFactor = 1;
 
@@ -20,11 +21,13 @@ function loadCuisines() {
 }
 
 function handleWheelStopped(e) {
+    speechBubble.showSelectedCuisine(e.detail);
     saveCuisine(e.detail);
     showCheer(false);
 }
 
 function handleWheelStarted() {
+    speechBubble.hideSpeechBubble();
     showCheer(true);
 }
 

@@ -1,6 +1,4 @@
 // Move the code that draws the wheel into this file...
-var speechBubble = require('./speech_bubble.js');
-
 module.exports = {
     init: initWheel
 };
@@ -110,7 +108,6 @@ function checkEndDrag(e, context, cuisines, colors, scaleFactor) {
             spinTime: 0,
             startAngle: 0
         };
-        speechBubble.hideSpeechBubble();
         rotateWheel(context, cuisines, colors, scaleFactor, options);
     }
 }
@@ -182,7 +179,6 @@ function drawText(context, text, angle, arc, textRadius){
 function stopRotateWheel(startAngle, cuisines) {
     clearTimeout(spinTimeout);
     var selectedIndex = getSelectedCuisineIndex(startAngle, cuisines);
-    speechBubble.showSelectedCuisine(cuisines[selectedIndex]);
     var drawingCanvas = document.getElementById("canvas");
     drawingCanvas.dispatchEvent(new CustomEvent('wheelStopped', {'detail': cuisines[selectedIndex]}));
 

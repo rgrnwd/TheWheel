@@ -70756,6 +70756,7 @@ function generateColors(numberOfColors)
 var service = require('./service.js');
 var wheel = require('./wheel.js');
 var colors = require('./colors.js');
+var speechBubble = require('./speech_bubble.js');
 
 var scaleFactor = 1;
 
@@ -70775,11 +70776,13 @@ function loadCuisines() {
 }
 
 function handleWheelStopped(e) {
+    speechBubble.showSelectedCuisine(e.detail);
     saveCuisine(e.detail);
     showCheer(false);
 }
 
 function handleWheelStarted() {
+    speechBubble.hideSpeechBubble();
     showCheer(true);
 }
 
@@ -70804,7 +70807,7 @@ function showCheer(show){
 }
 
 
-},{"./colors.js":423,"./service.js":425,"./wheel.js":428}],425:[function(require,module,exports){
+},{"./colors.js":423,"./service.js":425,"./speech_bubble.js":426,"./wheel.js":428}],425:[function(require,module,exports){
 var http = require('http');
 var requestPromise = require('request-promise');
 var url = require('./url.js');
@@ -70838,7 +70841,7 @@ module.exports = {
 
 function hideSpeechBubble() {
     var result = document.getElementById("lunch-result");
-    result.innerText = " ";
+    result.innerText = "Friday, yummy!";
     result.className = "speech-bubble hidden";
 }
 
@@ -70862,8 +70865,6 @@ module.exports = {
 };
 },{"url":415}],428:[function(require,module,exports){
 // Move the code that draws the wheel into this file...
-var speechBubble = require('./speech_bubble.js');
-
 module.exports = {
     init: initWheel
 };
@@ -70973,7 +70974,6 @@ function checkEndDrag(e, context, cuisines, colors, scaleFactor) {
             spinTime: 0,
             startAngle: 0
         };
-        speechBubble.hideSpeechBubble();
         rotateWheel(context, cuisines, colors, scaleFactor, options);
     }
 }
@@ -71045,7 +71045,6 @@ function drawText(context, text, angle, arc, textRadius){
 function stopRotateWheel(startAngle, cuisines) {
     clearTimeout(spinTimeout);
     var selectedIndex = getSelectedCuisineIndex(startAngle, cuisines);
-    speechBubble.showSelectedCuisine(cuisines[selectedIndex]);
     var drawingCanvas = document.getElementById("canvas");
     drawingCanvas.dispatchEvent(new CustomEvent('wheelStopped', {'detail': cuisines[selectedIndex]}));
 
@@ -71067,4 +71066,4 @@ function easeOut(t, c, d) {
     return c*(tc + -3*ts + 3*t);
 }
 
-},{"./speech_bubble.js":426}]},{},[423,424,425,426,427,428]);
+},{}]},{},[423,424,425,426,427,428]);
