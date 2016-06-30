@@ -69,14 +69,13 @@ function getColor(index) {
 
 function drawRouletteWheel() {
     var drawingCanvas = document.getElementById("canvas");
-    var canvasWidth = 600;
-    var canvasHeight = 600;
+    var canvasWidth = 500;
+    var canvasHeight = 500;
 
     if (drawingCanvas.getContext) {
         var physicsCenterX = canvasWidth * 0.5;
         var physicsCenterY = canvasHeight * 0.5;
         var outsideRadius = (physicsCenterX) - 20;
-        var insideRadius = 0;
         var textRadius = outsideRadius - 60;
         context = drawingCanvas.getContext("2d");
 
@@ -95,7 +94,7 @@ function drawRouletteWheel() {
 
             context.beginPath();
             context.arc(physicsCenterX, physicsCenterY, outsideRadius, angle, angle + arc, false);
-            context.arc(physicsCenterX, physicsCenterY, insideRadius, angle + arc, angle, true);
+            context.arc(physicsCenterX, physicsCenterY, 0, angle + arc, angle, true);
             context.fill();
             context.save();
 

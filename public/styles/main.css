@@ -11,11 +11,11 @@ body {
 #canvas {
   display: inline;
   cursor: pointer;
-  margin-top: 50px; }
+  margin-top: 40px; }
 
 .bee-marker {
-  width: 70px;
-  height: 100px;
+  width: 50px;
+  height: 70px;
   position: absolute;
   left: 49%;
   top: 90px;
@@ -47,11 +47,11 @@ body {
   font-weight: bold;
   font-size: 16px;
   border: 1px;
-  left: 20px;
+  left: 0;
   position: relative;
   width: 250px;
-  padding: 20px 0px;
-  margin: 1em 53% 30px;
+  padding: 15px 0px;
+  margin: 0 53% 30px;
   text-align: center;
   color: #000;
   background: #f9d835;
@@ -70,7 +70,7 @@ body {
   .speech-bubble:before {
     content: "";
     position: absolute;
-    bottom: -25px;
+    bottom: -20px;
     left: 25px;
     width: 18px;
     height: 18px;
@@ -81,7 +81,7 @@ body {
   .speech-bubble:after {
     content: "";
     position: absolute;
-    bottom: -45px;
+    bottom: -35px;
     left: 5px;
     width: 13px;
     height: 13px;
