@@ -3,7 +3,7 @@ module.exports = {
     init: initWheel
 };
 
-var spinTimeout = null, wheelSpinning = false;
+var spinTimeout = null, wheelSpinning = false, startAngle = 0;
 var dragStarted = false, dragStartTime = 0, dragEndTime = 0;
 var PhysicsCenter = {};
 
@@ -15,7 +15,7 @@ function initWheel(cuisines, scaleFactor, colors) {
         var context = drawingCanvas.getContext("2d");
         setCanvasSize(context, scaleFactor);
         setContextStyle(context, '22' * scaleFactor);
-        drawWheel(context, 0, cuisines, colors, scaleFactor);
+        drawWheel(context, cuisines, colors);
         addMouseDragDrop(context, cuisines, colors, scaleFactor);
     }
 }
@@ -105,8 +105,7 @@ function checkEndDrag(e, context, cuisines, colors, scaleFactor) {
             spinAngleStart: spinAngleStart,
             speed: speed,
             spinTimeTotal: spinTimeTotal,
-            spinTime: 0,
-            startAngle: 0
+            spinTime: 0
         };
         rotateWheel(context, cuisines, colors, scaleFactor, options);
     }
@@ -114,27 +113,25 @@ function checkEndDrag(e, context, cuisines, colors, scaleFactor) {
 
 function rotateWheel(context, cuisines, colors, scaleFactor, options) {
     var spinTime = options.spinTime + options.speed;
-    var startAngle = options.startAngle;
 
     if(spinTime >= options.spinTimeTotal) {
-        stopRotateWheel(startAngle, cuisines);
+        stopRotateWheel(cuisines);
         return;
     }
     wheelSpinning = true;
     var spinAngle = options.spinAngleStart - easeOut(spinTime, options.spinAngleStart, options.spinTimeTotal);
     startAngle += (spinAngle * Math.PI / 180);
-    drawWheel(context, startAngle, cuisines, colors, scaleFactor);
+    drawWheel(context, cuisines, colors);
     var opts = {
         spinAngleStart: options.spinAngleStart,
         speed: options.speed,
         spinTimeTotal: options.spinTimeTotal,
-        spinTime: spinTime,
-        startAngle: startAngle
+        spinTime: spinTime
     };
     spinTimeout = setTimeout(function() {rotateWheel(context, cuisines, colors, scaleFactor, opts)}, options.speed);
 }
 
-function drawWheel(context, startAngle, cuisines, colors, scaleFactor) {
+function drawWheel(context, cuisines, colors) {
 
     var arc = Math.PI / (cuisines.length * 0.5);
     var outsideRadius = (PhysicsCenter.X) - 20;
@@ -176,20 +173,19 @@ function drawText(context, text, angle, arc, textRadius){
     drawHighlightedText(context, text, 35, 7);
 }
 
-function stopRotateWheel(startAngle, cuisines) {
+function stopRotateWheel(cuisines) {
     clearTimeout(spinTimeout);
-    var selectedIndex = getSelectedCuisineIndex(startAngle, cuisines);
+    var selectedIndex = getSelectedCuisineIndex(cuisines);
     var drawingCanvas = document.getElementById("canvas");
     drawingCanvas.dispatchEvent(new CustomEvent('wheelStopped', {'detail': cuisines[selectedIndex]}));
 
     wheelSpinning = false;
 }
 
-function getSelectedCuisineIndex(startAngle, cuisines) {
+function getSelectedCuisineIndex(cuisines) {
     //Math.PI radians = 180 degrees
     var arc = (Math.PI * 2) / cuisines.length;
     var degrees = (startAngle * 180 / Math.PI + 90) % 360;
-    console.log(startAngle,degrees);
     var arcd = arc * 180 / Math.PI;
     return Math.floor((360 - degrees) / arcd);
 }
