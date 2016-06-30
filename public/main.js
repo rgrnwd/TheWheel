@@ -70718,67 +70718,9 @@ function extend() {
 }
 
 },{}],423:[function(require,module,exports){
-var http = require('http');
-var requestPromise = require('request-promise');
-var url = require('./url.js');
-
 module.exports = {
-    getCuisines: getCuisines,
-    saveCuisineForTheWeek: saveCuisineForTheWeek
-};
-
-function getCuisines() {
-    var options = {
-        uri: url.getBaseUrl() + '/cuisines',
-        json: true
-    };
-    return requestPromise.get(options);
-}
-
-function saveCuisineForTheWeek(cuisine) {
-    var options = {
-        uri: url.getBaseUrl() + '/cuisines/select/' + cuisine.id
-    };
-
-    return requestPromise.post(options)
-}
-
-},{"./url.js":426,"http":392,"request-promise":215}],424:[function(require,module,exports){
-var service = require('./cuisine_service.js');
-
-var spinTimeout = null, wheelSpinning = false;
-var dragStarted = false, dragStartTime = 0, dragEndTime = 0;
-
-var mousePositions = [];
-var scaleFactor = 1;
-
-var PhysicsCenter = {
-    X: 0,
-    Y: 0
-};
-module.exports = {
-    init: init,
     generateColors: generateColors
 };
-
-function init() {
-    service.getCuisines().then(function(cuisines) {
-        initWheel(cuisines);
-    }).catch(function(error) {
-        console.log(error);
-    });
-}
-
-function initWheel(cuisines) {
-    var colors = generateColors(cuisines.length);
-    var drawingCanvas = document.getElementById("canvas");
-    if (drawingCanvas.getContext) {
-        var context = drawingCanvas.getContext("2d");
-        setContextStyle(context, '22' * scaleFactor);
-        drawRouletteWheel(context, 0, cuisines, colors, scaleFactor);
-        addMouseDragDrop(context, cuisines, colors);
-    }
-}
 
 function componentToHex(c) {
     var hex = c.toString(16);
@@ -70809,47 +70751,138 @@ function generateColors(numberOfColors)
     return colors;
 }
 
-function drawRouletteWheel(context, startAngle, cuisines, colors, scaleFactor) {
-    setCanvasSize(context, scaleFactor);
 
-    var arc = Math.PI / (cuisines.length * 0.5);
-    var outsideRadius = (PhysicsCenter.X) - 20;
-    var textRadius = outsideRadius - 60;
+},{}],424:[function(require,module,exports){
+var service = require('./service.js');
+var wheel = require('./wheel.js');
+var colors = require('./colors.js');
 
-    for(var i = 0; i < cuisines.length; i++) {
-        var angle = startAngle + i * arc;
-        context.fillStyle = colors[i];
+var scaleFactor = 1;
 
-        context.beginPath();
-        context.arc(PhysicsCenter.X, PhysicsCenter.Y, outsideRadius, angle, angle + arc, false);
-        context.arc(PhysicsCenter.X, PhysicsCenter.Y, 0, angle + arc, angle, true);
-        context.fill();
-        context.save();
-        drawText(context, cuisines[i].name, angle, arc, textRadius);
-        context.restore();
+window.onload = function() {
+    loadCuisines();
+};
+
+function loadCuisines() {
+    service.getCuisines().then(function(cuisines) {
+        var drawingCanvas = document.getElementById("canvas");
+        drawingCanvas.addEventListener('wheelStopped', handleWheelStopped, false);
+        drawingCanvas.addEventListener('wheelStarted', handleWheelStarted, false);
+        wheel.init(cuisines, scaleFactor, colors.generateColors(cuisines.length));
+    }).catch(function(error) {
+        console.log(error);
+    });
+}
+
+function handleWheelStopped(e) {
+    saveCuisine(e.detail);
+    showCheer(false);
+}
+
+function handleWheelStarted() {
+    showCheer(true);
+}
+
+function saveCuisine(cuisine) {
+    service.saveCuisineForTheWeek(cuisine).then(function() {
+        console.log(cuisine.name, "saved as this week's choice");
+    }).catch(function(error) {
+        console.log(error);
+    });
+}
+
+function showCheer(show){
+    if (show){
+        document.getElementById("cheer-right").className = "cheerleader right";
+        document.getElementById("cheer-left").className = "cheerleader left";
+        document.getElementById("cheer-bottom").className = "cheerleader bottom";
+    }else{
+        document.getElementById("cheer-right").className = "cheerleader right hidden ";
+        document.getElementById("cheer-left").className = "cheerleader left hidden";
+        document.getElementById("cheer-bottom").className = "cheerleader bottom hidden";
     }
 }
 
-function setCanvasSize(context, scaleFactor){
 
-    var canvasWidth = 500 * scaleFactor;
-    var canvasHeight = 500 * scaleFactor;
+},{"./colors.js":423,"./service.js":425,"./wheel.js":428}],425:[function(require,module,exports){
+var http = require('http');
+var requestPromise = require('request-promise');
+var url = require('./url.js');
 
-    PhysicsCenter.X =canvasWidth * 0.5;
-    PhysicsCenter.Y = canvasHeight * 0.5;
+module.exports = {
+    getCuisines: getCuisines,
+    saveCuisineForTheWeek: saveCuisineForTheWeek
+};
 
-    context.clearRect(0,0,canvasWidth,canvasHeight);
+function getCuisines() {
+    var options = {
+        uri: url.getBaseUrl() + '/cuisines',
+        json: true
+    };
+    return requestPromise.get(options);
 }
 
-function drawText(context, text, angle, arc, textRadius){
-    var angleArc = angle + arc / 2;
-    var cos = Math.cos(angleArc);
-    var sin = Math.sin(angleArc);
-    var startPointX = PhysicsCenter.X + cos * textRadius;
-    var startPointY = PhysicsCenter.Y + sin * textRadius;
-    context.translate(startPointX, startPointY); 
-    context.rotate(angleArc); 
-    drawHighlightedText(context, text, 35, 7);
+function saveCuisineForTheWeek(cuisine) {
+    var options = {
+        uri: url.getBaseUrl() + '/cuisines/select/' + cuisine.id
+    };
+
+    return requestPromise.post(options)
+}
+
+},{"./url.js":427,"http":392,"request-promise":215}],426:[function(require,module,exports){
+module.exports = {
+    hideSpeechBubble: hideSpeechBubble,
+    showSelectedCuisine: showSelectedCuisine
+};
+
+function hideSpeechBubble() {
+    var result = document.getElementById("lunch-result");
+    result.innerText = " ";
+    result.className = "speech-bubble hidden";
+}
+
+function showSelectedCuisine(cuisine) {
+    var result = document.getElementById("lunch-result");
+    result.innerText = cuisine.name + ', ' + cuisine.emotion;
+    result.className = "speech-bubble";
+}
+
+
+},{}],427:[function(require,module,exports){
+var url = require('url') ;
+
+function getBaseUrl() {
+    var appUrl = url.parse(document.location.href);
+    return appUrl.protocol + "//" + appUrl.host;
+}
+
+module.exports = {
+    getBaseUrl: getBaseUrl
+};
+},{"url":415}],428:[function(require,module,exports){
+// Move the code that draws the wheel into this file...
+var speechBubble = require('./speech_bubble.js');
+
+module.exports = {
+    init: initWheel
+};
+
+var spinTimeout = null, wheelSpinning = false;
+var dragStarted = false, dragStartTime = 0, dragEndTime = 0;
+var PhysicsCenter = {};
+
+var mousePositions = [];
+
+function initWheel(cuisines, scaleFactor, colors) {
+    var drawingCanvas = document.getElementById("canvas");
+    if (drawingCanvas.getContext) {
+        var context = drawingCanvas.getContext("2d");
+        setCanvasSize(context, scaleFactor);
+        setContextStyle(context, '22' * scaleFactor);
+        drawWheel(context, 0, cuisines, colors, scaleFactor);
+        addMouseDragDrop(context, cuisines, colors, scaleFactor);
+    }
 }
 
 function setContextStyle(context, fontSize){
@@ -70868,8 +70901,8 @@ function drawHighlightedText(context, text, x, y) {
     context.fillText(text, x, y);
 }
 
-function addMouseDragDrop(context, cuisines, colors){
-    var endMouseDragHandler = function(e) {checkEndDrag(e, context, cuisines, colors)};
+function addMouseDragDrop(context, cuisines, colors, scaleFactor){
+    var endMouseDragHandler = function(e) {checkEndDrag(e, context, cuisines, colors, scaleFactor)};
     var drawingCanvas = document.getElementById("canvas");
     drawingCanvas.addEventListener('mousedown', checkStartDrag);
     drawingCanvas.addEventListener('mousemove', mouseMove);
@@ -70891,7 +70924,8 @@ function distanceBetweenPoints(start, end) {
 
 function checkStartDrag(e) {
     if (!wheelSpinning) {
-        showCheer(true);
+        var drawingCanvas = document.getElementById("canvas");
+        drawingCanvas.dispatchEvent(new Event('wheelStarted'));
         var mouseStart = {
             x: e.pageX,
             y: e.pageY
@@ -70905,14 +70939,14 @@ function checkStartDrag(e) {
 function distanceTravelled() {
     var distance = 0;
     mousePositions.forEach(function(mousePosition, index) {
-           if(index > 0) {
-               distance += distanceBetweenPoints(mousePositions[index-1],mousePosition);
-           }
+        if(index > 0) {
+            distance += distanceBetweenPoints(mousePositions[index-1],mousePosition);
+        }
     });
     return distance;
 }
 
-function checkEndDrag(e, context, cuisines, colors) {
+function checkEndDrag(e, context, cuisines, colors, scaleFactor) {
     if (dragStarted && !wheelSpinning) {
         dragEndTime = e.timeStamp;
         var distance = distanceTravelled();
@@ -70939,12 +70973,12 @@ function checkEndDrag(e, context, cuisines, colors) {
             spinTime: 0,
             startAngle: 0
         };
-        hideSpeechBubble();
-        rotateWheel(context, cuisines, colors, options);
+        speechBubble.hideSpeechBubble();
+        rotateWheel(context, cuisines, colors, scaleFactor, options);
     }
 }
 
-function rotateWheel(context, cuisines, colors, options) {
+function rotateWheel(context, cuisines, colors, scaleFactor, options) {
     var spinTime = options.spinTime + options.speed;
     var startAngle = options.startAngle;
 
@@ -70955,7 +70989,7 @@ function rotateWheel(context, cuisines, colors, options) {
     wheelSpinning = true;
     var spinAngle = options.spinAngleStart - easeOut(spinTime, options.spinAngleStart, options.spinTimeTotal);
     startAngle += (spinAngle * Math.PI / 180);
-    drawRouletteWheel(context, startAngle, cuisines, colors, scaleFactor);
+    drawWheel(context, startAngle, cuisines, colors, scaleFactor);
     var opts = {
         spinAngleStart: options.spinAngleStart,
         speed: options.speed,
@@ -70963,21 +70997,58 @@ function rotateWheel(context, cuisines, colors, options) {
         spinTime: spinTime,
         startAngle: startAngle
     };
-    spinTimeout = setTimeout(function() {rotateWheel(context, cuisines, colors, opts)}, options.speed);
+    spinTimeout = setTimeout(function() {rotateWheel(context, cuisines, colors, scaleFactor, opts)}, options.speed);
 }
 
-function hideSpeechBubble() {
-    var result = document.getElementById("lunch-result");
-    result.innerText = "Friday Yummy!";
-    result.className = "speech-bubble hidden";
+function drawWheel(context, startAngle, cuisines, colors, scaleFactor) {
+
+    var arc = Math.PI / (cuisines.length * 0.5);
+    var outsideRadius = (PhysicsCenter.X) - 20;
+    var textRadius = outsideRadius - 60;
+
+    for(var i = 0; i < cuisines.length; i++) {
+        var angle = startAngle + i * arc;
+        context.fillStyle = colors[i];
+
+        context.beginPath();
+        context.arc(PhysicsCenter.X, PhysicsCenter.Y, outsideRadius, angle, angle + arc, false);
+        context.arc(PhysicsCenter.X, PhysicsCenter.Y, 0, angle + arc, angle, true);
+        context.fill();
+        context.save();
+        drawText(context, cuisines[i].name, angle, arc, textRadius);
+        context.restore();
+    }
+}
+
+function setCanvasSize(context, scaleFactor){
+
+    var canvasWidth = 500 * scaleFactor;
+    var canvasHeight = 500 * scaleFactor;
+
+    PhysicsCenter.X = canvasWidth * 0.5;
+    PhysicsCenter.Y = canvasHeight * 0.5;
+
+    context.clearRect(0,0,canvasWidth,canvasHeight);
+}
+
+function drawText(context, text, angle, arc, textRadius){
+    var angleArc = angle + arc / 2;
+    var cos = Math.cos(angleArc);
+    var sin = Math.sin(angleArc);
+    var startPointX = PhysicsCenter.X + cos * textRadius;
+    var startPointY = PhysicsCenter.Y + sin * textRadius;
+    context.translate(startPointX, startPointY);
+    context.rotate(angleArc);
+    drawHighlightedText(context, text, 35, 7);
 }
 
 function stopRotateWheel(startAngle, cuisines) {
     clearTimeout(spinTimeout);
     var selectedIndex = getSelectedCuisineIndex(startAngle, cuisines);
-    showSelectedCuisine(cuisines[selectedIndex]);
-    saveCuisine(cuisines[selectedIndex]);
-    showCheer(false);
+    speechBubble.showSelectedCuisine(cuisines[selectedIndex]);
+    var drawingCanvas = document.getElementById("canvas");
+    drawingCanvas.dispatchEvent(new CustomEvent('wheelStopped', {'detail': cuisines[selectedIndex]}));
+
     wheelSpinning = false;
 }
 
@@ -70990,55 +71061,10 @@ function getSelectedCuisineIndex(startAngle, cuisines) {
     return Math.floor((360 - degrees) / arcd);
 }
 
-function saveCuisine(cuisine) {
-    service.saveCuisineForTheWeek(cuisine).then(function() {
-        console.log(cuisine.name, "saved as this week's choice");
-    }).catch(function(error) {
-        console.log(error);
-    });
-}
-
-function showSelectedCuisine(cuisine) {
-    var result = document.getElementById("lunch-result");
-    result.innerText = cuisine.name + ', ' + cuisine.emotion;
-    result.className = "speech-bubble";
-}
-
-function showCheer(show){
-    if (show){
-        document.getElementById("cheer-right").className = "cheerleader right";
-        document.getElementById("cheer-left").className = "cheerleader left";
-        document.getElementById("cheer-bottom").className = "cheerleader bottom";
-    }else{
-        document.getElementById("cheer-right").className = "cheerleader right hidden ";
-        document.getElementById("cheer-left").className = "cheerleader left hidden";
-        document.getElementById("cheer-bottom").className = "cheerleader bottom hidden";
-    }
-}
-
 function easeOut(t, c, d) {
     var ts = (t/=d)*t;
     var tc = ts*t;
     return c*(tc + -3*ts + 3*t);
 }
-},{"./cuisine_service.js":423}],425:[function(require,module,exports){
-var wheel = require('./cuisine_wheel.js');
 
-window.onload = function() {
-    wheel.init();
-};
-
-},{"./cuisine_wheel.js":424}],426:[function(require,module,exports){
-var url = require('url') ;
-
-function getBaseUrl() {
-    var appUrl = url.parse(document.location.href);
-    return appUrl.protocol + "//" + appUrl.host;
-}
-
-module.exports = {
-    getBaseUrl: getBaseUrl
-};
-},{"url":415}],427:[function(require,module,exports){
-// Move the code that draws the wheel into this file...
-},{}]},{},[423,424,425,426,427]);
+},{"./speech_bubble.js":426}]},{},[423,424,425,426,427,428]);

@@ -4,7 +4,7 @@ var sinon = require('sinon');
 require('sinon-as-promised');
 var http = require('http');
 var url = require('../public/js/url.js');
-var service = require('../public/js/cuisine_service.js');
+var service = require('../public/js/service.js');
 
 describe('Cuisine Service', function() {
     beforeEach(function() {
