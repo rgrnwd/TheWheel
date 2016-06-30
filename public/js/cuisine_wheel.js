@@ -188,28 +188,43 @@ function checkEndDrag(e, cuisines, colors) {
         if ((spinTimeTotal / 100) < speed) {
             spinTimeTotal += speed * (Math.random() + 1.5) * 100;
         }
+        var spinAngleStart = Math.random() * 10 + 10;
 
-        spin(0, cuisines, colors, speed, spinTimeTotal);
+        var options = {
+            spinAngleStart: spinAngleStart,
+            speed: speed,
+            spinTimeTotal: spinTimeTotal,
+            spinTime: 0,
+            startAngle: 0
+        };
+        hideSpeechBubble();
+        rotateWheel(cuisines, colors, options);
     }
 }
 
-function spin(startAngle, cuisines, colors, speed, spinTimeTotal) {
-    var spinAngleStart = Math.random() * 10 + 10;
-    rotateWheel(startAngle, cuisines, colors, spinAngleStart, 0, speed, spinTimeTotal);
-}
+function rotateWheel(cuisines, colors, options) {
+    var spinTime = options.spinTime + options.speed;
+    var startAngle = options.startAngle;
 
-function rotateWheel(startAngle, cuisines, colors, spinAngleStart, spinTime, speed, spinTimeTotal) {
-    spinTime += speed;
-
-    if(spinTime >= spinTimeTotal) {
+    if(spinTime >= options.spinTimeTotal) {
         stopRotateWheel(startAngle, cuisines);
         return;
     }
     wheelSpinning = true;
-    var spinAngle = spinAngleStart - easeOut(spinTime, spinAngleStart, spinTimeTotal);
+    var spinAngle = options.spinAngleStart - easeOut(spinTime, options.spinAngleStart, options.spinTimeTotal);
     startAngle += (spinAngle * Math.PI / 180);
     drawRouletteWheel(startAngle, cuisines, colors, scaleFactor);
-    spinTimeout = setTimeout(function() {rotateWheel(startAngle, cuisines, colors, spinAngleStart, spinTime, speed, spinTimeTotal);}, speed);
+    var opts = {
+        spinAngleStart: options.spinAngleStart,
+        speed: options.speed,
+        spinTimeTotal: options.spinTimeTotal,
+        spinTime: spinTime,
+        startAngle: startAngle
+    };
+    spinTimeout = setTimeout(function() {rotateWheel(cuisines, colors, opts)}, options.speed);
+}
+
+function hideSpeechBubble() {
     var result = document.getElementById("lunch-result");
     result.innerText = "Friday Yummy!";
     result.className = "speech-bubble hidden";
@@ -225,10 +240,12 @@ function stopRotateWheel(startAngle, cuisines) {
 }
 
 function getSelectedCuisineIndex(startAngle, cuisines) {
-    var arc = Math.PI / (cuisines.length * 0.5);
-    var degrees = startAngle * 180 / Math.PI + 90;
+    //Math.PI radians = 180 degrees
+    var arc = (Math.PI * 2) / cuisines.length;
+    var degrees = (startAngle * 180 / Math.PI + 90) % 360;
+    console.log(startAngle,degrees);
     var arcd = arc * 180 / Math.PI;
-    return Math.floor((360 - degrees % 360) / arcd);
+    return Math.floor((360 - degrees) / arcd);
 }
 
 function saveCuisine(cuisine) {
