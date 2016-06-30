@@ -70955,7 +70955,12 @@ var dragStarted = false, dragStartTime = 0, dragEndTime = 0;
 var context, drawingCanvas;
 var arc;
 var mousePositions = [];
+var scaleFactor = 1;
 
+var PhysicsCenter = {
+    X: 0,
+    Y: 0
+}
 module.exports = {
     init: init,
     generateColors: generateColors
@@ -70974,9 +70979,9 @@ function initWheel(cuisines) {
     drawingCanvas = document.getElementById("canvas");
     if (drawingCanvas.getContext) {
         context = drawingCanvas.getContext("2d");
-        setContextStyle('22');
+        setContextStyle('22' * scaleFactor);
     }
-    drawRouletteWheel(0, cuisines, colors);
+    drawRouletteWheel(0, cuisines, colors, scaleFactor);
     addMouseDragDrop(cuisines, colors);
 }
 
@@ -71009,39 +71014,46 @@ function generateColors(numberOfColors)
     return colors;
 }
 
-function drawRouletteWheel(startAngle, cuisines, colors) {
-    var canvasWidth = 500;
-    var canvasHeight = 500;
+function drawRouletteWheel(startAngle, cuisines, colors, scaleFactor) {
+
+    setCanvasSize(scaleFactor);
+
     var arc = Math.PI / (cuisines.length * 0.5);
-
-    var physicsCenterX = canvasWidth * 0.5;
-    var physicsCenterY = canvasHeight * 0.5;
-    var outsideRadius = (physicsCenterX) - 20;
+    var outsideRadius = (PhysicsCenter.X) - 20;
     var textRadius = outsideRadius - 60;
-
-    context.clearRect(0,0,canvasWidth,canvasWidth);
 
     for(var i = 0; i < cuisines.length; i++) {
         var angle = startAngle + i * arc;
         context.fillStyle = colors[i];
 
         context.beginPath();
-        context.arc(physicsCenterX, physicsCenterY, outsideRadius, angle, angle + arc, false);
-        context.arc(physicsCenterX, physicsCenterY, 0, angle + arc, angle, true);
+        context.arc(PhysicsCenter.X, PhysicsCenter.Y, outsideRadius, angle, angle + arc, false);
+        context.arc(PhysicsCenter.X, PhysicsCenter.Y, 0, angle + arc, angle, true);
         context.fill();
         context.save();
-        drawText(cuisines[i].name, physicsCenterX, physicsCenterY, angle, arc, textRadius);
+        drawText(cuisines[i].name, angle, arc, textRadius);
         context.restore();
     }
 }
 
-function drawText(text, physicsCenterX, physicsCenterY, angle, arc, textRadius){
+function setCanvasSize(scaleFactor){
+
+    var canvasWidth = 500 * scaleFactor;
+    var canvasHeight = 500 * scaleFactor;
+
+    PhysicsCenter.X =canvasWidth * 0.5;
+    PhysicsCenter.Y = canvasHeight * 0.5;
+
+    context.clearRect(0,0,canvasWidth,canvasHeight);
+}
+
+function drawText(text, angle, arc, textRadius){
 
     var angleArc = angle + arc / 2;
     var cos = Math.cos(angleArc);
     var sin = Math.sin(angleArc);
-    var startPointX = physicsCenterX + cos * textRadius;
-    var startPointY = physicsCenterY + sin * textRadius;
+    var startPointX = PhysicsCenter.X + cos * textRadius;
+    var startPointY = PhysicsCenter.Y + sin * textRadius;
     context.translate(startPointX, startPointY); 
     context.rotate(angleArc); 
     drawHighlightedText(text, 35, 7);
@@ -71145,7 +71157,7 @@ function rotateWheel(startAngle, cuisines, colors, spinAngleStart, spinTime, spe
     wheelSpinning = true;
     var spinAngle = spinAngleStart - easeOut(spinTime, spinAngleStart, spinTimeTotal);
     startAngle += (spinAngle * Math.PI / 180);
-    drawRouletteWheel(startAngle, cuisines, colors);
+    drawRouletteWheel(startAngle, cuisines, colors, scaleFactor);
     spinTimeout = setTimeout(function() {rotateWheel(startAngle, cuisines, colors, spinAngleStart, spinTime, speed, spinTimeTotal);}, speed);
     var result = document.getElementById("lunch-result");
     result.innerText = "Friday Yummy!";
