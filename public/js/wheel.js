@@ -132,21 +132,28 @@ function rotateWheel(context, cuisines, colors, scaleFactor, options) {
 }
 
 function drawWheel(context, cuisines, colors) {
+    var totalVotes = 0;
+    var votesCounted = 0;
 
-    var arc = Math.PI / (cuisines.length * 0.5);
+    for(var i = 0; i < cuisines.length; i++) {
+        totalVotes += cuisines[i].votes;
+    }
+
+    var arc = Math.PI / (totalVotes * 0.5);
     var outsideRadius = (PhysicsCenter.X) - 20;
     var textRadius = outsideRadius - 60;
 
     for(var i = 0; i < cuisines.length; i++) {
-        var angle = startAngle + i * arc;
+        var votes = cuisines[i].votes;
+        var angle = startAngle + (votesCounted * arc);
+        votesCounted += votes;
         context.fillStyle = colors[i];
-
         context.beginPath();
-        context.arc(PhysicsCenter.X, PhysicsCenter.Y, outsideRadius, angle, angle + arc, false);
-        context.arc(PhysicsCenter.X, PhysicsCenter.Y, 0, angle + arc, angle, true);
+        context.arc(PhysicsCenter.X, PhysicsCenter.Y, outsideRadius, angle, angle + (arc * votes), false);
+        context.arc(PhysicsCenter.X, PhysicsCenter.Y, 0, angle + (arc * votes), angle, true);
         context.fill();
         context.save();
-        drawText(context, cuisines[i].name, angle, arc, textRadius);
+        drawText(context, cuisines[i].name, angle, arc * votes, textRadius);
         context.restore();
     }
 }
@@ -184,10 +191,25 @@ function stopRotateWheel(cuisines) {
 
 function getSelectedCuisineIndex(cuisines) {
     //Math.PI radians = 180 degrees
-    var arc = (Math.PI * 2) / cuisines.length;
+    var totalVotes = 0;
+    var votesCounted = 0;
+
+    for(var i = 0; i < cuisines.length; i++) {
+        totalVotes += cuisines[i].votes;
+    }
+
+    var arc = (Math.PI * 2) / totalVotes;
     var degrees = (startAngle * 180 / Math.PI + 90) % 360;
     var arcd = arc * 180 / Math.PI;
-    return Math.floor((360 - degrees) / arcd);
+    var result = Math.floor((360 - degrees) / arcd);
+    for (var i = 0; i < cuisines.length; i++) {
+        if ((votesCounted  + cuisines[i].votes) < result) {
+            votesCounted += cuisines[i].votes;
+        } else {
+            return i;
+        }
+    }
+    return cuisines.length - 1;
 }
 
 function easeOut(t, c, d) {

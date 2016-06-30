@@ -25,7 +25,9 @@ app.set('port', port);
 var CuisineSchema = mongoose.Schema({
     name: String, 
     emotion: String, 
-    lastSelected: Date}, 
+    lastSelected: Date,
+    votes: Number
+  }, 
   {collection: 'Cuisines'});
 var cuisineModel = mongoose.model('cuisine', CuisineSchema);
 cuisineModel.find(function(err, cuisines) {
