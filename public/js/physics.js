@@ -93,8 +93,8 @@ function getArcByAngle(totalArcs, startRadiant) {
     var singleArcSize = (Math.PI * 2) / totalArcs;
     var degrees = (startRadiant * 180 / Math.PI) % 360;
     var arcSizeDegrees = singleArcSize * 180 / Math.PI;
-    var result = Math.floor((360 - degrees) / arcSizeDegrees);
-    return result;
+    var arcIndex = Math.floor((360 - degrees) / arcSizeDegrees);
+    return arcIndex;
 }
 function easeOut(t, c, d) {
     var ts = (t/=d)*t;
