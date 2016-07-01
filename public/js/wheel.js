@@ -119,7 +119,7 @@ function rotateWheel(context, cuisines, colors, scaleFactor, options) {
 
 function drawWheel(context, cuisines, colors) {
     var colorIndex = 0;
-    var totalWeight = getTotalArcs(cuisines);
+    var totalWeight = physics.getTotalVotes(cuisines);
     var accumulatedWeight = 0;
 
     var arc = physics.calculateArc(totalWeight); 
@@ -171,42 +171,9 @@ function drawText(context, text, angle, arc, textRadius){
 
 function stopRotateWheel(cuisines) {
     clearTimeout(spinTimeout);
-    var selectedIndex = physics.getSelectedCuisineIndex(cuisines.length, startAngle);
+    var selectedIndex = physics.getSelectedCuisineIndex(cuisines, startAngle);
     var drawingCanvas = document.getElementById("canvas");
     drawingCanvas.dispatchEvent(new CustomEvent('wheelStopped', {'detail': cuisines[selectedIndex]}));
 
     wheelSpinning = false;
 }
-
-function getSelectedCuisineIndex(cuisines) {
-    var arcStoppedWithin = physics.getArcStoppedWithin(getTotalArcs(cuisines), startAngle);
-    return getIndexBasedOnArc(cuisines, arcStoppedWithin);
-}
-
-function getTotalArcs(cuisines) {
-    var totalArcs = 0;
-
-    for(var i = 0; i < cuisines.length; i++) {
-        totalArcs += cuisines[i].votes;
-    }
-
-    return totalArcs;
-}
-
-function getIndexBasedOnArc(cuisines, arcStoppedWithin) {
-    var accumulatedArcs = 0;
-
-    for (var i = 0; i < cuisines.length; i++) {
-        if (cuisines[i].votes != 0) {
-            var upper = accumulatedArcs + cuisines[i].votes;
-            var lower = accumulatedArcs;
-
-            if (lower <= arcStoppedWithin && arcStoppedWithin < upper) {
-                return i;
-            } else {
-                accumulatedArcs += cuisines[i].votes;
-            } 
-        }
-    }
-}
-
