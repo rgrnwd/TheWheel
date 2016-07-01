@@ -1,4 +1,6 @@
 
+var votes = require('./votes.js');
+
 module.exports = {
 	distanceBetweenPoints : distanceBetweenPoints,
 	calculateSpeed : calculateSpeed,
@@ -9,8 +11,7 @@ module.exports = {
 	calculateRotation : calculateRotation, 
 	getSelectedCuisineIndex : getSelectedCuisineIndex, 
     getCuisineFromSelectedArc : getCuisineFromSelectedArc,
-	calculateArc : calculateArc,
-    getTotalVotes : getTotalVotes
+	calculateArc : calculateArc
 };
 
 function distanceBetweenPoints(start, end) {
@@ -66,7 +67,7 @@ function calculateTextStartPoint(angle, arc, textRadius, physicsCenter){
 }
 
 function getSelectedCuisineIndex(cuisines, startAngle) {
-    var totalVotes = getTotalVotes(cuisines);
+    var totalVotes = votes.getTotalVotes(cuisines);
     var arc = getCurrentArc(totalVotes, startAngle);
     return getCuisineFromSelectedArc(cuisines, arc);
 }
@@ -95,15 +96,6 @@ function getCurrentArc(totalVotes, startAngle) {
     var degrees = (startAngle * 180 / Math.PI + 90) % 360;
     var arcd = arc * 180 / Math.PI;
     return Math.floor((360 - degrees) / arcd);
-}
-function getTotalVotes(cuisines) {
-    var totalVotes = 0;
-
-    for(var i = 0; i < cuisines.length; i++) {
-        totalVotes += cuisines[i].votes;
-    }
-
-    return totalVotes;
 }
 function easeOut(t, c, d) {
     var ts = (t/=d)*t;

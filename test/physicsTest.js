@@ -43,27 +43,6 @@ describe('Physics', function() {
     	});
     });
 
-    describe('getTotalVotes', function() {
-
-    	it('should have zero votes if array is empty', function(){
-    		var cuisines = [];
-    		var votes = physics.getTotalVotes(cuisines);
-    		assert.equal(0, votes);
-    	});
-
-    	it('should have one vote for array with one item and one vote', function(){
-    		var cuisines = [{'votes': 1}];
-    		var votes = physics.getTotalVotes(cuisines);
-    		assert.equal(1, votes);
-    	});
-
-    	it('should aggregate votes for of all items in array', function(){
-    		var cuisines = [{'votes': 1}, {'votes': 3}, {'votes':2}];
-    		var votes = physics.getTotalVotes(cuisines);
-    		assert.equal(6, votes);
-    	});
-    });
-
     describe('calculateArc', function(){
     	it ('should calculate the arc when given 0', function(){
     		var length = 0;

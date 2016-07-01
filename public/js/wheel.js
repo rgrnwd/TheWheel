@@ -1,4 +1,5 @@
 var physics = require('./physics.js');
+var votes = require('./votes.js');
 
 module.exports = {
     init: initWheel
@@ -119,7 +120,7 @@ function rotateWheel(context, cuisines, colors, scaleFactor, options) {
 
 function drawWheel(context, cuisines, colors) {
     var colorIndex = 0;
-    var totalWeight = physics.getTotalVotes(cuisines);
+    var totalWeight = votes.getTotalVotes(cuisines);
     var accumulatedWeight = 0;
 
     var arc = physics.calculateArc(totalWeight); 
