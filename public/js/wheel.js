@@ -122,7 +122,7 @@ function drawWheel(context, cuisines, colors) {
     var totalWeight = getTotalArcs(cuisines);
     var accumulatedWeight = 0;
 
-    var arc = physics.calculateArc(totalWeight * 0.5); 
+    var arc = physics.calculateArc(totalWeight); 
     var outsideRadius = (PhysicsCenter.X) - 20;
     var textRadius = outsideRadius - 60;
 
@@ -130,7 +130,6 @@ function drawWheel(context, cuisines, colors) {
         var weighting = cuisines[i].votes;
         var angle = startAngle + arc * accumulatedWeight;
         accumulatedWeight += weighting;
-
 
         if (weighting != 0) {
             drawWheelSegment(context, colors[colorIndex], angle, arc * weighting, outsideRadius);
