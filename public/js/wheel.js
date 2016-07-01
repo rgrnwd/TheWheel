@@ -82,22 +82,27 @@ function checkEndDrag(e, context, cuisines, colors, scaleFactor) {
         dragStarted = false;
         dragEndTime = e.timeStamp;
 
-        var distance = distanceTravelled();
-        var speed = physics.calculateSpinTimeout(distance, dragEndTime - dragStartTime);
-        
-        var spinTimeTotal = 2000;
-        var spinAngleStart = physics.randomStartAngle();
-
-        var options = {
-            spinAngleStart: spinAngleStart,
-            speed: speed,
-            spinTimeTotal: spinTimeTotal,
-            spinTime: 0
-        };
-        rotateWheel(context, cuisines, colors, scaleFactor, options);
+        rotateWheel(context, cuisines, colors, scaleFactor, getSpinOptions(dragEndTime));
     }
 }
 
+function getSpinOptions(dragEndTime){
+
+    var distance = distanceTravelled();
+    var speed = physics.calculateSpinTimeout(distance, dragEndTime - dragStartTime);
+    
+    var spinTimeTotal = 2000;
+    var spinAngleStart = physics.randomStartAngle();
+
+    var spinOptions = {
+        spinAngleStart: spinAngleStart,
+        speed: speed,
+        spinTimeTotal: spinTimeTotal,
+        spinTime: 0
+    };
+
+    return spinOptions;
+}
 function rotateWheel(context, cuisines, colors, scaleFactor, options) {
     var spinTime = options.spinTime + options.speed;
     if(spinTime >= options.spinTimeTotal) {
