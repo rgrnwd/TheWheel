@@ -172,7 +172,8 @@ function drawText(context, text, angle, arc, textRadius){
 
 function stopRotateWheel(cuisines) {
     clearTimeout(spinTimeout);
-    var selectedIndex = physics.getSelectedCuisineIndex(cuisines, startAngle);
+    var totalVotes = votes.getTotalVotes(cuisines);
+    var selectedIndex = physics.getSelectedCuisineIndex(cuisines, totalVotes, startAngle);
     var drawingCanvas = document.getElementById("canvas");
     drawingCanvas.dispatchEvent(new CustomEvent('wheelStopped', {'detail': cuisines[selectedIndex]}));
 

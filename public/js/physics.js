@@ -1,6 +1,4 @@
 
-var votes = require('./votes.js');
-
 module.exports = {
 	distanceBetweenPoints : distanceBetweenPoints,
 	calculateSpeed : calculateSpeed,
@@ -66,8 +64,7 @@ function calculateTextStartPoint(angle, arc, textRadius, physicsCenter){
     return { x:startPointX, y: startPointY };
 }
 
-function getSelectedCuisineIndex(cuisines, startAngle) {
-    var totalVotes = votes.getTotalVotes(cuisines);
+function getSelectedCuisineIndex(cuisines, totalVotes, startAngle) {
     var arc = getCurrentArc(totalVotes, startAngle);
     return getCuisineFromSelectedArc(cuisines, arc);
 }

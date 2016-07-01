@@ -71044,7 +71044,7 @@ function showCheer(show){
 }
 
 
-},{"./colors.js":503,"./service.js":506,"./speech_bubble.js":507,"./wheel.js":509}],505:[function(require,module,exports){
+},{"./colors.js":503,"./service.js":506,"./speech_bubble.js":507,"./wheel.js":510}],505:[function(require,module,exports){
 
 module.exports = {
 	distanceBetweenPoints : distanceBetweenPoints,
@@ -71055,8 +71055,8 @@ module.exports = {
 	calculateTextStartPoint : calculateTextStartPoint, 
 	calculateRotation : calculateRotation, 
 	getSelectedCuisineIndex : getSelectedCuisineIndex, 
-	calculateArc : calculateArc,
-    getTotalVotes : getTotalVotes
+    getCuisineFromSelectedArc : getCuisineFromSelectedArc,
+	calculateArc : calculateArc
 };
 
 function distanceBetweenPoints(start, end) {
@@ -71111,13 +71111,12 @@ function calculateTextStartPoint(angle, arc, textRadius, physicsCenter){
     return { x:startPointX, y: startPointY };
 }
 
-function getSelectedCuisineIndex(cuisines, startAngle) {
-    var totalVotes = getTotalVotes(cuisines);
+function getSelectedCuisineIndex(cuisines, totalVotes, startAngle) {
     var arc = getCurrentArc(totalVotes, startAngle);
-    return getIndexBasedOnArc(cuisines, arc);
+    return getCuisineFromSelectedArc(cuisines, arc);
 }
 
-function getIndexBasedOnArc(cuisines, arc) {
+function getCuisineFromSelectedArc(cuisines, arc) {
     var accumulatedArcs = 0;
 
     for (var i = 0; i < cuisines.length; i++) {
@@ -71132,6 +71131,8 @@ function getIndexBasedOnArc(cuisines, arc) {
             } 
         }
     }
+    
+    return cuisines.length - 1;
 }
 
 function getCurrentArc(totalVotes, startAngle) {
@@ -71139,15 +71140,6 @@ function getCurrentArc(totalVotes, startAngle) {
     var degrees = (startAngle * 180 / Math.PI + 90) % 360;
     var arcd = arc * 180 / Math.PI;
     return Math.floor((360 - degrees) / arcd);
-}
-function getTotalVotes(cuisines) {
-    var totalVotes = 0;
-
-    for(var i = 0; i < cuisines.length; i++) {
-        totalVotes += cuisines[i].votes;
-    }
-
-    return totalVotes;
 }
 function easeOut(t, c, d) {
     var ts = (t/=d)*t;
@@ -71211,7 +71203,22 @@ module.exports = {
     getBaseUrl: getBaseUrl
 };
 },{"url":246}],509:[function(require,module,exports){
+module.exports = {
+    getTotalVotes : getTotalVotes
+}
+
+function getTotalVotes(cuisines) {
+    var totalVotes = 0;
+
+    for(var i = 0; i < cuisines.length; i++) {
+        totalVotes += cuisines[i].votes;
+    }
+
+    return totalVotes;
+}
+},{}],510:[function(require,module,exports){
 var physics = require('./physics.js');
+var votes = require('./votes.js');
 
 module.exports = {
     init: initWheel
@@ -71332,7 +71339,7 @@ function rotateWheel(context, cuisines, colors, scaleFactor, options) {
 
 function drawWheel(context, cuisines, colors) {
     var colorIndex = 0;
-    var totalWeight = physics.getTotalVotes(cuisines);
+    var totalWeight = votes.getTotalVotes(cuisines);
     var accumulatedWeight = 0;
 
     var arc = physics.calculateArc(totalWeight); 
@@ -71384,11 +71391,12 @@ function drawText(context, text, angle, arc, textRadius){
 
 function stopRotateWheel(cuisines) {
     clearTimeout(spinTimeout);
-    var selectedIndex = physics.getSelectedCuisineIndex(cuisines, startAngle);
+    var totalVotes = votes.getTotalVotes(cuisines);
+    var selectedIndex = physics.getSelectedCuisineIndex(cuisines, totalVotes, startAngle);
     var drawingCanvas = document.getElementById("canvas");
     drawingCanvas.dispatchEvent(new CustomEvent('wheelStopped', {'detail': cuisines[selectedIndex]}));
 
     wheelSpinning = false;
 }
 
-},{"./physics.js":505}]},{},[503,504,505,506,507,508,509]);
+},{"./physics.js":505,"./votes.js":509}]},{},[503,504,505,506,507,508,509,510]);
