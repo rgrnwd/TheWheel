@@ -8,6 +8,7 @@ module.exports = {
 	calculateTextStartPoint : calculateTextStartPoint, 
 	calculateRotation : calculateRotation, 
 	getSelectedCuisineIndex : getSelectedCuisineIndex, 
+    getCuisineFromSelectedArc : getCuisineFromSelectedArc,
 	calculateArc : calculateArc,
     getTotalVotes : getTotalVotes
 };
@@ -67,10 +68,10 @@ function calculateTextStartPoint(angle, arc, textRadius, physicsCenter){
 function getSelectedCuisineIndex(cuisines, startAngle) {
     var totalVotes = getTotalVotes(cuisines);
     var arc = getCurrentArc(totalVotes, startAngle);
-    return getIndexBasedOnArc(cuisines, arc);
+    return getCuisineFromSelectedArc(cuisines, arc);
 }
 
-function getIndexBasedOnArc(cuisines, arc) {
+function getCuisineFromSelectedArc(cuisines, arc) {
     var accumulatedArcs = 0;
 
     for (var i = 0; i < cuisines.length; i++) {
@@ -85,6 +86,8 @@ function getIndexBasedOnArc(cuisines, arc) {
             } 
         }
     }
+    
+    return cuisines.length - 1;
 }
 
 function getCurrentArc(totalVotes, startAngle) {
