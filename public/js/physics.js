@@ -10,7 +10,8 @@ module.exports = {
 	getSelectedCuisineIndex : getSelectedCuisineIndex, 
 	calculateArc : calculateArc,
     getTotalVotes : getTotalVotes
-}
+};
+
 function distanceBetweenPoints(start, end) {
     var a = end.x - start.x;
     var b = end.y - start.y;
