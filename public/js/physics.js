@@ -9,7 +9,8 @@ module.exports = {
 	calculateRotation : calculateRotation, 
 	getSelectedCuisineIndex : getSelectedCuisineIndex, 
     getCuisineFromSelectedArc : getCuisineFromSelectedArc,
-	calculateArc : calculateArc
+	calculateArc : calculateArc,
+    getArcByAngle : getArcByAngle 
 };
 
 function distanceBetweenPoints(start, end) {
@@ -64,8 +65,8 @@ function calculateTextStartPoint(angle, arc, textRadius, physicsCenter){
     return { x:startPointX, y: startPointY };
 }
 
-function getSelectedCuisineIndex(cuisines, totalVotes, startAngle) {
-    var arc = getCurrentArc(totalVotes, startAngle);
+function getSelectedCuisineIndex(cuisines, totalArcs, startRadiant) {
+    var arc = getArcByAngle(totalArcs, startRadiant);
     return getCuisineFromSelectedArc(cuisines, arc);
 }
 
@@ -88,11 +89,12 @@ function getCuisineFromSelectedArc(cuisines, arc) {
     return cuisines.length - 1;
 }
 
-function getCurrentArc(totalVotes, startAngle) {
-    var arc = (Math.PI * 2) / totalVotes;
-    var degrees = (startAngle * 180 / Math.PI + 90) % 360;
-    var arcd = arc * 180 / Math.PI;
-    return Math.floor((360 - degrees) / arcd);
+function getArcByAngle(totalArcs, startRadiant) {
+    var singleArcSize = (Math.PI * 2) / totalArcs;
+    var degrees = (startRadiant * 180 / Math.PI) % 360;
+    var arcSizeDegrees = singleArcSize * 180 / Math.PI;
+    var result = Math.floor((360 - degrees) / arcSizeDegrees);
+    return result;
 }
 function easeOut(t, c, d) {
     var ts = (t/=d)*t;

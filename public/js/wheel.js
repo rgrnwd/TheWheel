@@ -5,7 +5,7 @@ module.exports = {
     init: initWheel
 };
 
-var spinTimeout = null, wheelSpinning = false, startAngle = 0;
+var spinTimeout = null, wheelSpinning = false, startRadiant = 0;
 var dragStarted = false, dragStartTime = 0, dragEndTime = 0;
 var PhysicsCenter = {};
 
@@ -106,7 +106,7 @@ function rotateWheel(context, cuisines, colors, scaleFactor, options) {
         return;
     }
     wheelSpinning = true;
-    startAngle += physics.calculateSpinAngle(spinTime, options);
+    startRadiant += physics.calculateSpinAngle(spinTime, options);
     drawWheel(context, cuisines, colors);
     var opts = {
         spinAngleStart: options.spinAngleStart,
@@ -129,7 +129,7 @@ function drawWheel(context, cuisines, colors) {
 
     for(var i = 0; i < cuisines.length; i++) {
         var weighting = cuisines[i].votes;
-        var angle = startAngle + arc * accumulatedWeight;
+        var angle = startRadiant + arc * accumulatedWeight;
         accumulatedWeight += weighting;
 
         if (weighting != 0) {
@@ -173,7 +173,7 @@ function drawText(context, text, angle, arc, textRadius){
 function stopRotateWheel(cuisines) {
     clearTimeout(spinTimeout);
     var totalVotes = votes.getTotalVotes(cuisines);
-    var selectedIndex = physics.getSelectedCuisineIndex(cuisines, totalVotes, startAngle);
+    var selectedIndex = physics.getSelectedCuisineIndex(cuisines, totalVotes, startRadiant);
     var drawingCanvas = document.getElementById("canvas");
     drawingCanvas.dispatchEvent(new CustomEvent('wheelStopped', {'detail': cuisines[selectedIndex]}));
 

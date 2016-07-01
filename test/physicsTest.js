@@ -10,6 +10,49 @@ describe('Physics', function() {
         });
     });
 
+    describe('getArcByAngle', function(){
+
+    	it('should return first arc if only one arc in wheel', function(){
+    		var totalArcs = 0;
+    		var degreesInRadians = 90 * Math.PI / 180;
+    		var arc = physics.getArcByAngle(totalArcs, degreesInRadians);
+    		assert.equal(0, arc);
+    	});
+
+    	it('should return result on right (3) out of four arcs when we land "on the line" (90 degrees)', function(){
+    		var totalArcs = 4;
+    		var degreesInRadians = 90 * Math.PI / 180;
+    		var arc = physics.getArcByAngle(totalArcs, degreesInRadians);
+    		assert.equal(3, arc);
+    	});
+
+    	it('should return first out of four arcs for 280 degrees angle', function(){
+    		var totalArcs = 4;
+    		var degreesInRadians = 280 * Math.PI / 180;
+    		var arc = physics.getArcByAngle(totalArcs, degreesInRadians);
+    		assert.equal(0, arc);
+    	});
+    	it('should return second out of four arcs for 190 degrees angle', function(){
+    		var totalArcs = 4;
+    		var degreesInRadians = 190 * Math.PI / 180;
+    		var arc = physics.getArcByAngle(totalArcs, degreesInRadians);
+    		assert.equal(1, arc);
+    	});
+    	it('should return third out of four arcs for 100 degrees angle', function(){
+    		var totalArcs = 4;
+    		var degreesInRadians = 100 * Math.PI / 180;
+    		var arc = physics.getArcByAngle(totalArcs, degreesInRadians);
+    		assert.equal(2, arc);
+    	});
+    	it('should return fourth out of four arcs for 10 degrees angle', function(){
+    		var totalArcs = 4;
+    		var degreesInRadians = 10 * Math.PI / 180;
+    		var arc = physics.getArcByAngle(totalArcs, degreesInRadians);
+    		assert.equal(3, arc);
+    	});
+
+    });
+
     describe('getCuisineFromSelectedArc', function(){
 
     	it('should return -1 if no cuisines', function(){
