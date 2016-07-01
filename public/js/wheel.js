@@ -1,4 +1,5 @@
-// Move the code that draws the wheel into this file...
+var physics = require('./physics.js');
+
 module.exports = {
     init: initWheel
 };
@@ -51,12 +52,6 @@ function mouseMove(e) {
     }
 }
 
-function distanceBetweenPoints(start, end) {
-    var a = end.x - start.x;
-    var b = end.y - start.y;
-    return Math.sqrt( a*a + b*b );
-}
-
 function checkStartDrag(e) {
     if (!wheelSpinning) {
         var drawingCanvas = document.getElementById("canvas");
@@ -75,7 +70,7 @@ function distanceTravelled() {
     var distance = 0;
     mousePositions.forEach(function(mousePosition, index) {
         if(index > 0) {
-            distance += distanceBetweenPoints(mousePositions[index-1],mousePosition);
+            distance += physics.distanceBetweenPoints(mousePositions[index-1],mousePosition);
         }
     });
     return distance;
@@ -83,23 +78,14 @@ function distanceTravelled() {
 
 function checkEndDrag(e, context, cuisines, colors, scaleFactor) {
     if (dragStarted && !wheelSpinning) {
-        dragEndTime = e.timeStamp;
-        var distance = distanceTravelled();
-        var timeTaken = dragEndTime - dragStartTime;
-        var speed = distance / timeTaken;
         dragStarted = false;
-        speed = 10 / (speed*speed);
+        dragEndTime = e.timeStamp;
 
-        if (speed > 100) {
-            speed = 100 * (Math.random() + 0.5);
-        }
-
-        var spinTimeTotal = Math.ceil(distance * 20);
-
-        if ((spinTimeTotal / 100) < speed) {
-            spinTimeTotal += speed * (Math.random() + 1.5) * 100;
-        }
-        var spinAngleStart = Math.random() * 10 + 10;
+        var distance = distanceTravelled();
+        var speed = physics.calculateSpeed(distance, dragEndTime - dragStartTime);
+        
+        var spinTimeTotal = physics.calculateSpinTime(speed, distance);
+        var spinAngleStart = physics.randomStartAngle();
 
         var options = {
             spinAngleStart: spinAngleStart,
@@ -119,8 +105,7 @@ function rotateWheel(context, cuisines, colors, scaleFactor, options) {
         return;
     }
     wheelSpinning = true;
-    var spinAngle = options.spinAngleStart - easeOut(spinTime, options.spinAngleStart, options.spinTimeTotal);
-    startAngle += (spinAngle * Math.PI / 180);
+    startAngle += physics.calculateSpinAngle(spinTime, options);
     drawWheel(context, cuisines, colors);
     var opts = {
         spinAngleStart: options.spinAngleStart,
@@ -137,7 +122,7 @@ function drawWheel(context, cuisines, colors) {
     var totalWeight = getTotalArcs(cuisines);
     var accumulatedWeight = 0;
 
-    var arc = Math.PI / (totalWeight * 0.5);
+    var arc = physics.calculateArc(totalWeight * 0.5); 
     var outsideRadius = (PhysicsCenter.X) - 20;
     var textRadius = outsideRadius - 60;
 
@@ -148,7 +133,7 @@ function drawWheel(context, cuisines, colors) {
 
 
         if (weighting != 0) {
-            drawSegment(context, colors[colorIndex], angle, arc * weighting, outsideRadius);
+            drawWheelSegment(context, colors[colorIndex], angle, arc * weighting, outsideRadius);
             drawText(context, cuisines[i].name, angle, arc * weighting, textRadius);
             colorIndex++;
         }
@@ -157,7 +142,8 @@ function drawWheel(context, cuisines, colors) {
     }
 }
 
-function drawSegment(context, color, angle, arc, outsideRadius) {
+function drawWheelSegment(context, color, angle, arc, outsideRadius) {
+
     context.fillStyle = color;
     context.beginPath();
     context.arc(PhysicsCenter.X, PhysicsCenter.Y, outsideRadius, angle, angle + arc, false);
@@ -177,19 +163,16 @@ function setCanvasSize(context, scaleFactor){
 }
 
 function drawText(context, text, angle, arc, textRadius){
-    var angleArc = angle + arc / 2;
-    var cos = Math.cos(angleArc);
-    var sin = Math.sin(angleArc);
-    var startPointX = PhysicsCenter.X + cos * textRadius;
-    var startPointY = PhysicsCenter.Y + sin * textRadius;
-    context.translate(startPointX, startPointY);
-    context.rotate(angleArc);
+    var startPoint = physics.calculateTextStartPoint(angle, arc, textRadius, PhysicsCenter);
+
+    context.translate(startPoint.x, startPoint.y);
+    context.rotate(physics.calculateRotation(angle, arc));
     drawHighlightedText(context, text, 35, 7);
 }
 
 function stopRotateWheel(cuisines) {
     clearTimeout(spinTimeout);
-    var selectedIndex = getSelectedCuisineIndex(cuisines);
+    var selectedIndex = physics.getSelectedCuisineIndex(cuisines.length, startAngle);
     var drawingCanvas = document.getElementById("canvas");
     drawingCanvas.dispatchEvent(new CustomEvent('wheelStopped', {'detail': cuisines[selectedIndex]}));
 
@@ -197,7 +180,7 @@ function stopRotateWheel(cuisines) {
 }
 
 function getSelectedCuisineIndex(cuisines) {
-    var arcStoppedWithin = getArcStoppedWithin(getTotalArcs(cuisines), startAngle);
+    var arcStoppedWithin = physics.getArcStoppedWithin(getTotalArcs(cuisines), startAngle);
     return getIndexBasedOnArc(cuisines, arcStoppedWithin);
 }
 
@@ -209,14 +192,6 @@ function getTotalArcs(cuisines) {
     }
 
     return totalArcs;
-}
-
-function getArcStoppedWithin(totalArcs, startAngle) {
-    //Math.PI radians = 180 degrees
-    var arc = (Math.PI * 2) / totalArcs;
-    var degrees = (startAngle * 180 / Math.PI + 90) % 360;
-    var arcd = arc * 180 / Math.PI;
-    return Math.floor((360 - degrees) / arcd);
 }
 
 function getIndexBasedOnArc(cuisines, arcStoppedWithin) {
@@ -236,8 +211,3 @@ function getIndexBasedOnArc(cuisines, arcStoppedWithin) {
     }
 }
 
-function easeOut(t, c, d) {
-    var ts = (t/=d)*t;
-    var tc = ts*t;
-    return c*(tc + -3*ts + 3*t);
-}
