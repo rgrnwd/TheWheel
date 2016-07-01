@@ -41,13 +41,13 @@ function randomStartAngle(){
 function calculateRotation(angle, arc){
 	return angle + arc / 2;
 }
-function calculateTextStartPoint(angle, arc, textRadius, physicsCenter){
+function calculateTextStartPoint(angle, arc, radius, physicsCenter){
 
     var angleArc = calculateRotation(angle, arc);
     var cos = Math.cos(angleArc);
     var sin = Math.sin(angleArc);
-    var startPointX = physicsCenter.X + cos * textRadius;
-    var startPointY = physicsCenter.Y + sin * textRadius;
+    var startPointX = physicsCenter.X + cos * radius;
+    var startPointY = physicsCenter.Y + sin * radius;
 
     return { x:startPointX, y: startPointY };
 }

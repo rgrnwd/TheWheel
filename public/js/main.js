@@ -41,7 +41,7 @@ function handleWheelStopped(e) {
 
 function handleWheelStarted() {
     speechBubble.hideSpeechBubble();
-    showCheer(false);
+    showCheer(true);
 }
 
 function saveCuisine(cuisine) {

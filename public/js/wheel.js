@@ -128,12 +128,12 @@ function drawWheel(context, cuisines, colors) {
 
     for(var i = 0; i < cuisines.length; i++) {
         var weighting = cuisines[i].votes;
-        var angle = startAngleRadians + arc * accumulatedWeight;
+        var radian = startAngleRadians + arc * accumulatedWeight;
         accumulatedWeight += weighting;
 
         if (weighting != 0) {
-            drawWheelSegment(context, colors[colorIndex], angle, arc * weighting, outsideRadius);
-            drawText(context, cuisines[i].name, angle, arc * weighting, textRadius);
+            drawWheelSegment(context, colors[colorIndex], radian, arc * weighting, outsideRadius);
+            drawText(context, cuisines[i].name, radian, arc * weighting, textRadius);
             colorIndex++;
         }
 
@@ -141,12 +141,20 @@ function drawWheel(context, cuisines, colors) {
     }
 }
 
-function drawWheelSegment(context, color, angle, arc, outsideRadius) {
+function drawText(context, text, radian, arc, radius){
+    var startPoint = physics.calculateTextStartPoint(radian, arc, radius, PhysicsCenter);
+
+    context.translate(startPoint.x, startPoint.y);
+    context.rotate(physics.calculateRotation(radian, arc));
+    drawHighlightedText(context, text, 35, 7);
+}
+
+function drawWheelSegment(context, color, radian, arc, outsideRadius) {
 
     context.fillStyle = color;
     context.beginPath();
-    context.arc(PhysicsCenter.X, PhysicsCenter.Y, outsideRadius, angle, angle + arc, false);
-    context.arc(PhysicsCenter.X, PhysicsCenter.Y, 0, angle + arc, angle, true);
+    context.arc(PhysicsCenter.X, PhysicsCenter.Y, outsideRadius, radian, radian + arc, false);
+    context.arc(PhysicsCenter.X, PhysicsCenter.Y, 0, radian + arc, radian, true);
     context.fill();
     context.save();
 }
@@ -159,14 +167,6 @@ function setCanvasSize(context, scaleFactor){
     PhysicsCenter.Y = canvasHeight * 0.5;
 
     context.clearRect(0,0,canvasWidth,canvasHeight);
-}
-
-function drawText(context, text, angle, arc, textRadius){
-    var startPoint = physics.calculateTextStartPoint(angle, arc, textRadius, PhysicsCenter);
-
-    context.translate(startPoint.x, startPoint.y);
-    context.rotate(physics.calculateRotation(angle, arc));
-    drawHighlightedText(context, text, 35, 7);
 }
 
 function stopRotateWheel(cuisines) {
