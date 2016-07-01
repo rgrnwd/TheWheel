@@ -70781,16 +70781,37 @@ exports.createContext = Script.createContext = function (context) {
 arguments[4][320][0].apply(exports,arguments)
 },{"dup":320}],415:[function(require,module,exports){
 module.exports = {
-    generateColors: generateColors
+    generateColors: generateColors,
+    rgbToHtml: rgb2html,
+    componentToHex: componentToHex
 };
 
-function componentToHex(c) {
+function componentToHex(c, minLength) {
     var hex = c.toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
+
+    var stringHex = "";
+
+    if (hex.length < minLength) {
+        var padding = minLength - hex.length;
+
+        for (var i = 0; i < padding; i++) {
+            stringHex += "0";
+        }
+
+    }
+
+    stringHex += hex;
+
+    return stringHex;
 }
 
 function rgb2html(r, g, b) {
-    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+    var htmlColor =  "#" + componentToHex(r, 2) + componentToHex(g, 2) + componentToHex(b, 2);
+    if (htmlColor.match(/^#[0-9a-f]{6}$/)) {
+        return htmlColor;
+    }
+
+    return "#ffffff";
 }
 
 function generateColors(numberOfColors)
@@ -70831,10 +70852,23 @@ function loadCuisines() {
         var drawingCanvas = document.getElementById("canvas");
         drawingCanvas.addEventListener('wheelStopped', handleWheelStopped, false);
         drawingCanvas.addEventListener('wheelStarted', handleWheelStarted, false);
-        wheel.init(cuisines, scaleFactor, colors.generateColors(cuisines.length));
+        var colorsRequired = getCuisinesWithPositiveVoteCount(cuisines);
+        wheel.init(cuisines, scaleFactor, colors.generateColors(colorsRequired));
     }).catch(function(error) {
         console.log(error);
     });
+}
+
+function getCuisinesWithPositiveVoteCount(cuisines) {
+    var colorsRequired = 0;
+
+    for (var i = 0; i < cuisines.length; i++) {
+        if (cuisines[i].votes > 0) {
+            colorsRequired++;
+        }
+    }
+
+    return colorsRequired;
 }
 
 function handleWheelStopped(e) {
@@ -71056,38 +71090,45 @@ function rotateWheel(context, cuisines, colors, scaleFactor, options) {
         spinTimeTotal: options.spinTimeTotal,
         spinTime: spinTime
     };
+
     spinTimeout = setTimeout(function() {rotateWheel(context, cuisines, colors, scaleFactor, opts)}, options.speed);
 }
 
 function drawWheel(context, cuisines, colors) {
-    var totalVotes = 0;
-    var votesCounted = 0;
+    var colorIndex = 0;
+    var totalWeight = getTotalArcs(cuisines);
+    var accumulatedWeight = 0;
 
-    for(var i = 0; i < cuisines.length; i++) {
-        totalVotes += cuisines[i].votes;
-    }
-
-    var arc = Math.PI / (totalVotes * 0.5);
+    var arc = Math.PI / (totalWeight * 0.5);
     var outsideRadius = (PhysicsCenter.X) - 20;
     var textRadius = outsideRadius - 60;
 
     for(var i = 0; i < cuisines.length; i++) {
-        var votes = cuisines[i].votes;
-        var angle = startAngle + (votesCounted * arc);
-        votesCounted += votes;
-        context.fillStyle = colors[i];
-        context.beginPath();
-        context.arc(PhysicsCenter.X, PhysicsCenter.Y, outsideRadius, angle, angle + (arc * votes), false);
-        context.arc(PhysicsCenter.X, PhysicsCenter.Y, 0, angle + (arc * votes), angle, true);
-        context.fill();
-        context.save();
-        drawText(context, cuisines[i].name, angle, arc * votes, textRadius);
+        var weighting = cuisines[i].votes;
+        var angle = startAngle + arc * accumulatedWeight;
+        accumulatedWeight += weighting;
+
+
+        if (weighting != 0) {
+            drawSegment(context, colors[colorIndex], angle, arc * weighting, outsideRadius);
+            drawText(context, cuisines[i].name, angle, arc * weighting, textRadius);
+            colorIndex++;
+        }
+
         context.restore();
     }
 }
 
-function setCanvasSize(context, scaleFactor){
+function drawSegment(context, color, angle, arc, outsideRadius) {
+    context.fillStyle = color;
+    context.beginPath();
+    context.arc(PhysicsCenter.X, PhysicsCenter.Y, outsideRadius, angle, angle + arc, false);
+    context.arc(PhysicsCenter.X, PhysicsCenter.Y, 0, angle + arc, angle, true);
+    context.fill();
+    context.save();
+}
 
+function setCanvasSize(context, scaleFactor){
     var canvasWidth = 500 * scaleFactor;
     var canvasHeight = 500 * scaleFactor;
 
@@ -71118,26 +71159,43 @@ function stopRotateWheel(cuisines) {
 }
 
 function getSelectedCuisineIndex(cuisines) {
-    //Math.PI radians = 180 degrees
-    var totalVotes = 0;
-    var votesCounted = 0;
+    var arcStoppedWithin = getArcStoppedWithin(getTotalArcs(cuisines), startAngle);
+    return getIndexBasedOnArc(cuisines, arcStoppedWithin);
+}
+
+function getTotalArcs(cuisines) {
+    var totalArcs = 0;
 
     for(var i = 0; i < cuisines.length; i++) {
-        totalVotes += cuisines[i].votes;
+        totalArcs += cuisines[i].votes;
     }
 
-    var arc = (Math.PI * 2) / totalVotes;
+    return totalArcs;
+}
+
+function getArcStoppedWithin(totalArcs, startAngle) {
+    //Math.PI radians = 180 degrees
+    var arc = (Math.PI * 2) / totalArcs;
     var degrees = (startAngle * 180 / Math.PI + 90) % 360;
     var arcd = arc * 180 / Math.PI;
-    var result = Math.floor((360 - degrees) / arcd);
+    return Math.floor((360 - degrees) / arcd);
+}
+
+function getIndexBasedOnArc(cuisines, arcStoppedWithin) {
+    var accumulatedArcs = 0;
+
     for (var i = 0; i < cuisines.length; i++) {
-        if ((votesCounted  + cuisines[i].votes) < result) {
-            votesCounted += cuisines[i].votes;
-        } else {
-            return i;
+        if (cuisines[i].votes != 0) {
+            var upper = accumulatedArcs + cuisines[i].votes;
+            var lower = accumulatedArcs;
+
+            if (lower <= arcStoppedWithin && arcStoppedWithin < upper) {
+                return i;
+            } else {
+                accumulatedArcs += cuisines[i].votes;
+            } 
         }
     }
-    return cuisines.length - 1;
 }
 
 function easeOut(t, c, d) {

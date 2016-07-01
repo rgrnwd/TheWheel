@@ -14,10 +14,23 @@ function loadCuisines() {
         var drawingCanvas = document.getElementById("canvas");
         drawingCanvas.addEventListener('wheelStopped', handleWheelStopped, false);
         drawingCanvas.addEventListener('wheelStarted', handleWheelStarted, false);
-        wheel.init(cuisines, scaleFactor, colors.generateColors(cuisines.length));
+        var colorsRequired = getCuisinesWithPositiveVoteCount(cuisines);
+        wheel.init(cuisines, scaleFactor, colors.generateColors(colorsRequired));
     }).catch(function(error) {
         console.log(error);
     });
+}
+
+function getCuisinesWithPositiveVoteCount(cuisines) {
+    var colorsRequired = 0;
+
+    for (var i = 0; i < cuisines.length; i++) {
+        if (cuisines[i].votes > 0) {
+            colorsRequired++;
+        }
+    }
+
+    return colorsRequired;
 }
 
 function handleWheelStopped(e) {

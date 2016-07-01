@@ -133,6 +133,7 @@ function rotateWheel(context, cuisines, colors, scaleFactor, options) {
 }
 
 function drawWheel(context, cuisines, colors) {
+    var colorIndex = 0;
     var totalWeight = getTotalArcs(cuisines);
     var accumulatedWeight = 0;
 
@@ -145,9 +146,11 @@ function drawWheel(context, cuisines, colors) {
         var angle = startAngle + arc * accumulatedWeight;
         accumulatedWeight += weighting;
 
-        if (weighting > 0) {
-            drawSegment(context, colors[i], angle, arc * weighting, outsideRadius);
+
+        if (weighting != 0) {
+            drawSegment(context, colors[colorIndex], angle, arc * weighting, outsideRadius);
             drawText(context, cuisines[i].name, angle, arc * weighting, textRadius);
+            colorIndex++;
         }
 
         context.restore();

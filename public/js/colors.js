@@ -1,14 +1,35 @@
 module.exports = {
-    generateColors: generateColors
+    generateColors: generateColors,
+    rgbToHtml: rgb2html,
+    componentToHex: componentToHex
 };
 
-function componentToHex(c) {
+function componentToHex(c, minLength) {
     var hex = c.toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
+
+    var stringHex = "";
+
+    if (hex.length < minLength) {
+        var padding = minLength - hex.length;
+
+        for (var i = 0; i < padding; i++) {
+            stringHex += "0";
+        }
+
+    }
+
+    stringHex += hex;
+
+    return stringHex;
 }
 
 function rgb2html(r, g, b) {
-    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+    var htmlColor =  "#" + componentToHex(r, 2) + componentToHex(g, 2) + componentToHex(b, 2);
+    if (htmlColor.match(/^#[0-9a-f]{6}$/)) {
+        return htmlColor;
+    }
+
+    return "#ffffff";
 }
 
 function generateColors(numberOfColors)
