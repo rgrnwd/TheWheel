@@ -1,12 +1,31 @@
+var assert = require('chai').assert;
 var physics = require('../public/js/physics.js');
 var assert = require('chai').assert;
 
 describe('Physics', function() {
     describe('distanceBetweenPoints', function() {
         it('should return 0 when start and end are the same points', function() {
-            // var point = {x:10,y:10};
-            // var distance = physics.distanceBetweenPoints(point, point);
-            // assert.equal(0, distance);
+            var point = {x:10,y:10};
+            var distance = physics.distanceBetweenPoints(point, point);
+            assert.equal(0, distance);
+        });
+        it('should return difference in x when y values are same', function() {
+            var start = {x:5,y:10};
+            var end = {x:10,y:10};
+            var distance = physics.distanceBetweenPoints(start, end);
+            assert.equal(5, distance);
+        });
+        it('should return difference in y when x values are same', function() {
+            var start = {x:10,y:3};
+            var end = {x:10,y:10};
+            var distance = physics.distanceBetweenPoints(start, end);
+            assert.equal(7, distance);
+        });
+        it('should return correct values when x and y are different', function() {
+            var start = {x:1,y:2};
+            var end = {x:4,y:6};
+            var distance = physics.distanceBetweenPoints(start, end);
+            assert.equal(5, distance);
         });
     });
 
