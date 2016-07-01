@@ -77,6 +77,20 @@ describe('Physics', function() {
 			Math.random.restore();
 		});
 	});
+
+	describe('calculateSpinAngleInRadians', function() {
+		it('should return', function() {
+			var stub = sinon.stub(physics, 'easeOut', function() {
+				console.log('stub is called');
+				return 0.5;
+			});
+			var value = physics.calculateSpinAngleInRadians(10, 20, 40);
+			var expectedValue = 0.174533;
+			assert.approximately(value, expectedValue, 0.000001);
+			physics.easeOut.restore();
+		});
+	});
+
     describe('getArcByAngle', function(){
 
     	it('should return first arc if only one arc in wheel', function(){

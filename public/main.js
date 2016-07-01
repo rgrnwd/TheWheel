@@ -70847,13 +70847,14 @@ module.exports = {
 	distanceBetweenPoints : distanceBetweenPoints,
     calculateSpinTimeout : calculateSpinTimeout,
 	randomStartAngle : randomStartAngle,
-	calculateSpinAngle : calculateSpinAngleInRadians,
+    calculateSpinAngleInRadians : calculateSpinAngleInRadians,
 	calculateTextStartPoint : calculateTextStartPoint, 
 	calculateRotation : calculateRotation, 
 	getSelectedCuisineIndex : getSelectedCuisineIndex, 
     getCuisineFromSelectedArc : getCuisineFromSelectedArc,
 	calculateArc : calculateArc,
-    getArcByAngle : getArcByAngle 
+    getArcByAngle : getArcByAngle,
+    easeOut: easeOut
 };
 
 function distanceBetweenPoints(start, end) {
@@ -70874,7 +70875,7 @@ function calculateArc(length){
 	return Math.PI / (length * 0.5);
 }
 function calculateSpinAngleInRadians(spinTime, spinAngleStart, spinTimeTotal){
-    var spinAngle = spinAngleStart - (spinAngleStart * easeOut(spinTime, spinTimeTotal));
+    var spinAngle = spinAngleStart - (spinAngleStart * this.easeOut(spinTime, spinTimeTotal));
 
 	return (spinAngle * Math.PI / 180); //degrees to radians
 }
@@ -70923,8 +70924,7 @@ function getArcByAngle(totalArcs, startRadiant, offsetRadian) {
     var singleArcSize = (Math.PI * 2) / totalArcs;
     var degrees = ((startRadiant + offsetRadian) * 180 / Math.PI) % 360;
     var arcSizeDegrees = singleArcSize * 180 / Math.PI;
-    var arcIndex = Math.floor((360 - degrees) / arcSizeDegrees);
-    return arcIndex;
+    return Math.floor((360 - degrees) / arcSizeDegrees);
 }
 
 function easeOut(t, d) {
@@ -71092,7 +71092,7 @@ function checkEndDrag(e, context, cuisines, colors, scaleFactor) {
         
         var spinTimeTotal = 2000;
         var spinAngleStart = physics.randomStartAngle();
-        console.log(speed, spinAngleStart);
+
         var options = {
             spinAngleStart: spinAngleStart,
             speed: speed,
@@ -71110,7 +71110,7 @@ function rotateWheel(context, cuisines, colors, scaleFactor, options) {
         return;
     }
     wheelSpinning = true;
-    startAngleRadians += physics.calculateSpinAngle(spinTime, options.spinAngleStart, options.spinTimeTotal);
+    startAngleRadians += physics.calculateSpinAngleInRadians(spinTime, options.spinAngleStart, options.spinTimeTotal);
     drawWheel(context, cuisines, colors);
     var opts = {
         spinAngleStart: options.spinAngleStart,

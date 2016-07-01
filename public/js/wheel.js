@@ -105,7 +105,7 @@ function rotateWheel(context, cuisines, colors, scaleFactor, options) {
         return;
     }
     wheelSpinning = true;
-    startAngleRadians += physics.calculateSpinAngle(spinTime, options.spinAngleStart, options.spinTimeTotal);
+    startAngleRadians += physics.calculateSpinAngleInRadians(spinTime, options.spinAngleStart, options.spinTimeTotal);
     drawWheel(context, cuisines, colors);
     var opts = {
         spinAngleStart: options.spinAngleStart,
