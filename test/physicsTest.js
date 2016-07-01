@@ -55,23 +55,23 @@ describe('Physics', function() {
     });
 
 	describe('randomStartAngle', function() {
-		it('should return 10 as the minimum', function() {
+		it('should return 5 as the minimum', function() {
 			sinon.stub(Math, "random", function(){
 				return 0;
 			});
-			assert.equal(10, physics.randomStartAngle());
+			assert.equal(5, physics.randomStartAngle());
 		});
-		it('should return 20 as the maximum', function() {
+		it('should return 25 as the maximum', function() {
 			sinon.stub(Math, "random", function(){
 				return 1;
 			});
-			assert.equal(20, physics.randomStartAngle());
+			assert.equal(25, physics.randomStartAngle());
 		});
-		it('should return value between 10 and 20', function() {
+		it('should return value between 5 and 25', function() {
 			sinon.stub(Math, "random", function(){
 				return 0.75;
 			});
-			assert.equal(17.5, physics.randomStartAngle());
+			assert.equal(20, physics.randomStartAngle());
 		});
 		afterEach(function() {
 			Math.random.restore();

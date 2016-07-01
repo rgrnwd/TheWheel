@@ -35,7 +35,7 @@ function calculateSpinAngleInRadians(spinTime, spinAngleStart, spinTimeTotal){
 	return (spinAngle * Math.PI / 180); //degrees to radians
 }
 function randomStartAngle(){
-    return Math.random() * 10 + 10;
+    return Math.random() * 20 + 5;
 }
 function calculateRotation(angle, arc){
 	return angle + arc / 2;
