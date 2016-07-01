@@ -66,7 +66,7 @@ function calculateTextStartPoint(angle, arc, textRadius, physicsCenter){
 }
 
 function getSelectedCuisineIndex(cuisines, totalArcs, startRadiant) {
-    var arc = getArcByAngle(totalArcs, startRadiant);
+    var arc = getArcByAngle(totalArcs, startRadiant, Math.PI / 2);
     return getCuisineFromSelectedArc(cuisines, arc);
 }
 
@@ -89,9 +89,9 @@ function getCuisineFromSelectedArc(cuisines, arc) {
     return cuisines.length - 1;
 }
 
-function getArcByAngle(totalArcs, startRadiant) {
+function getArcByAngle(totalArcs, startRadiant, offsetRadian) {
     var singleArcSize = (Math.PI * 2) / totalArcs;
-    var degrees = (startRadiant * 180 / Math.PI) % 360;
+    var degrees = ((startRadiant + offsetRadian) * 180 / Math.PI) % 360;
     var arcSizeDegrees = singleArcSize * 180 / Math.PI;
     var arcIndex = Math.floor((360 - degrees) / arcSizeDegrees);
     return arcIndex;

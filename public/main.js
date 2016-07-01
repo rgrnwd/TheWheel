@@ -71112,8 +71112,8 @@ function calculateTextStartPoint(angle, arc, textRadius, physicsCenter){
     return { x:startPointX, y: startPointY };
 }
 
-function getSelectedCuisineIndex(cuisines, totalArcs, startAngle) {
-    var arc = getArcByAngle(totalArcs, startAngle);
+function getSelectedCuisineIndex(cuisines, totalArcs, startRadiant) {
+    var arc = getArcByAngle(totalArcs, startRadiant, Math.PI / 2);
     return getCuisineFromSelectedArc(cuisines, arc);
 }
 
@@ -71136,16 +71136,12 @@ function getCuisineFromSelectedArc(cuisines, arc) {
     return cuisines.length - 1;
 }
 
-function getArcByAngle(totalArcs, angle) {
-    console.log('total Arcs:', totalArcs);
-    console.log('angle:', angle);
+function getArcByAngle(totalArcs, startRadiant, offsetRadian) {
     var singleArcSize = (Math.PI * 2) / totalArcs;
-    var degrees = (angle * 180 / Math.PI + 90) % 360;
-    console.log('degrees:', degrees);
+    var degrees = ((startRadiant + offsetRadian) * 180 / Math.PI) % 360;
     var arcSizeDegrees = singleArcSize * 180 / Math.PI;
-    var result = Math.floor((360 - degrees) / arcSizeDegrees);
-    console.log('arc:', result);
-    return result;
+    var arcIndex = Math.floor((360 - degrees) / arcSizeDegrees);
+    return arcIndex;
 }
 function easeOut(t, c, d) {
     var ts = (t/=d)*t;
@@ -71230,7 +71226,7 @@ module.exports = {
     init: initWheel
 };
 
-var spinTimeout = null, wheelSpinning = false, startAngle = 0;
+var spinTimeout = null, wheelSpinning = false, startRadiant = 0;
 var dragStarted = false, dragStartTime = 0, dragEndTime = 0;
 var PhysicsCenter = {};
 
@@ -71331,7 +71327,7 @@ function rotateWheel(context, cuisines, colors, scaleFactor, options) {
         return;
     }
     wheelSpinning = true;
-    startAngle += physics.calculateSpinAngle(spinTime, options);
+    startRadiant += physics.calculateSpinAngle(spinTime, options);
     drawWheel(context, cuisines, colors);
     var opts = {
         spinAngleStart: options.spinAngleStart,
@@ -71354,7 +71350,7 @@ function drawWheel(context, cuisines, colors) {
 
     for(var i = 0; i < cuisines.length; i++) {
         var weighting = cuisines[i].votes;
-        var angle = startAngle + arc * accumulatedWeight;
+        var angle = startRadiant + arc * accumulatedWeight;
         accumulatedWeight += weighting;
 
         if (weighting != 0) {
@@ -71398,7 +71394,7 @@ function drawText(context, text, angle, arc, textRadius){
 function stopRotateWheel(cuisines) {
     clearTimeout(spinTimeout);
     var totalVotes = votes.getTotalVotes(cuisines);
-    var selectedIndex = physics.getSelectedCuisineIndex(cuisines, totalVotes, startAngle);
+    var selectedIndex = physics.getSelectedCuisineIndex(cuisines, totalVotes, startRadiant);
     var drawingCanvas = document.getElementById("canvas");
     drawingCanvas.dispatchEvent(new CustomEvent('wheelStopped', {'detail': cuisines[selectedIndex]}));
 

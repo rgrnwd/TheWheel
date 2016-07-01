@@ -15,42 +15,42 @@ describe('Physics', function() {
     	it('should return first arc if only one arc in wheel', function(){
     		var totalArcs = 0;
     		var degreesInRadians = 90 * Math.PI / 180;
-    		var arc = physics.getArcByAngle(totalArcs, degreesInRadians);
+    		var arc = physics.getArcByAngle(totalArcs, degreesInRadians, 0);
     		assert.equal(0, arc);
     	});
 
     	it('should return result on right (3) out of four arcs when we land "on the line" (90 degrees)', function(){
     		var totalArcs = 4;
     		var degreesInRadians = 90 * Math.PI / 180;
-    		var arc = physics.getArcByAngle(totalArcs, degreesInRadians);
+    		var arc = physics.getArcByAngle(totalArcs, degreesInRadians, 0);
     		assert.equal(3, arc);
     	});
 
     	it('should return first out of four arcs for 280 degrees angle', function(){
     		var totalArcs = 4;
     		var degreesInRadians = 280 * Math.PI / 180;
-    		var arc = physics.getArcByAngle(totalArcs, degreesInRadians);
+    		var arc = physics.getArcByAngle(totalArcs, degreesInRadians, 0);
     		assert.equal(0, arc);
     	});
 
     	it('should return second out of four arcs for 190 degrees angle', function(){
     		var totalArcs = 4;
     		var degreesInRadians = 190 * Math.PI / 180;
-    		var arc = physics.getArcByAngle(totalArcs, degreesInRadians);
+    		var arc = physics.getArcByAngle(totalArcs, degreesInRadians, 0);
     		assert.equal(1, arc);
     	});
     	
     	it('should return third out of four arcs for 100 degrees angle', function(){
     		var totalArcs = 4;
     		var degreesInRadians = 100 * Math.PI / 180;
-    		var arc = physics.getArcByAngle(totalArcs, degreesInRadians);
+    		var arc = physics.getArcByAngle(totalArcs, degreesInRadians, 0);
     		assert.equal(2, arc);
     	});
     	
     	it('should return fourth out of four arcs for 10 degrees angle', function(){
     		var totalArcs = 4;
     		var degreesInRadians = 10 * Math.PI / 180;
-    		var arc = physics.getArcByAngle(totalArcs, degreesInRadians);
+    		var arc = physics.getArcByAngle(totalArcs, degreesInRadians, 0);
     		assert.equal(3, arc);
     	});
 
@@ -60,7 +60,7 @@ describe('Physics', function() {
 
     	it('should select the first cuisine when it is in the first arc and angled at marker', function(){
     		var totalArcs = 4;
-    		var startRadian = 280 * Math.PI / 180;
+    		var startRadian = 190 * Math.PI / 180;
     		var cuisines = [{'votes': 1}, {'votes': 1}, {'votes': 1}, {'votes': 1}]
     		var index = physics.getSelectedCuisineIndex(cuisines, totalArcs, startRadian);
     		assert.equal(0, index);
@@ -75,13 +75,21 @@ describe('Physics', function() {
     	});
 
     	it('should select the correct cuisine when it is angled at marker', function(){
+    		var totalArcs = 8;
+    		var startRadian = 240 * Math.PI / 180;
+    		var cuisines = [{'votes': 2}, {'votes': 1}, {'votes': 2}, {'votes': 2}, {'votes': 1}]
+    		var index = physics.getSelectedCuisineIndex(cuisines, totalArcs, startRadian);
+    		assert.equal(0, index);
+    	});
+
+    	it('should select the correct cuisine when it is angled at another marker', function(){
     		var totalArcs = 12;
-    		var startRadian = 120 * Math.PI / 180;
+    		var startRadian = 30 * Math.PI / 180;
     		var cuisines = [{'votes': 2}, {'votes': 1}, {'votes': 3}, {'votes': 1}, {'votes': 5}]
     		var index = physics.getSelectedCuisineIndex(cuisines, totalArcs, startRadian);
     		assert.equal(4, index);
     	});
-    	
+
     });
 
     describe('getCuisineFromSelectedArc', function(){
