@@ -1,4 +1,3 @@
-var assert = require('chai').assert;
 var physics = require('../public/js/physics.js');
 var assert = require('chai').assert;
 
@@ -26,6 +25,31 @@ describe('Physics', function() {
             var end = {x:4,y:6};
             var distance = physics.distanceBetweenPoints(start, end);
             assert.equal(5, distance);
+        });
+        it('should not return negative distance', function() {
+            var start = {x:4,y:6};
+            var end = {x:1,y:2};
+            var distance = physics.distanceBetweenPoints(start, end);
+            assert.equal(5, distance);
+        });
+    });
+
+    describe('calculateSpinTimeout', function() {
+        it('should give default value when distance is 0', function() {
+            var spinTimeout = physics.calculateSpinTimeout(0, 10);
+            assert.equal(5, spinTimeout);
+        });
+        it('should give default value when timeTaken is 0', function() {
+            var spinTimeout = physics.calculateSpinTimeout(10, 0);
+            assert.equal(5, spinTimeout);
+        });
+        it('should give max value when value exceeds max value', function () {
+            var spinTimeout =  physics.calculateSpinTimeout(10, 51);
+            assert.equal(5, spinTimeout);
+        });
+        it('should give timeout based on time and distance', function () {
+            var spinTimeout =  physics.calculateSpinTimeout(10, 10);
+            assert.equal(1, spinTimeout);
         });
     });
 

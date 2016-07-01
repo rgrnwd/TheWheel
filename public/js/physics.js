@@ -1,10 +1,9 @@
 
 module.exports = {
 	distanceBetweenPoints : distanceBetweenPoints,
-	calculateSpeed : calculateSpeed,
-	calculateSpinTime : calculateSpinTime,
+    calculateSpinTimeout : calculateSpinTimeout,
 	randomStartAngle : randomStartAngle,
-	calculateSpinAngle : calculateSpinAngle,
+	calculateSpinAngle : calculateSpinAngleInRadians,
 	calculateTextStartPoint : calculateTextStartPoint, 
 	calculateRotation : calculateRotation, 
 	getSelectedCuisineIndex : getSelectedCuisineIndex, 
@@ -19,37 +18,24 @@ function distanceBetweenPoints(start, end) {
     return Math.sqrt( a*a + b*b );
 }
 
-function calculateSpeed(distance, timeTaken){
-	var speed = distance / timeTaken;
-
-    speed = 10 / (speed*speed);
-
-    if (speed > 100) {
-        speed = 100 * (Math.random() + 0.5);
+function calculateSpinTimeout(distance, timeTaken){
+    if (timeTaken == 0 || distance == 0) {
+        return 5;
     }
-
-    return speed;
+    var timeOut = timeTaken / distance;
+    return timeOut > 5 ? 5 : timeOut;
 }
+
 function calculateArc(length){
 	return Math.PI / (length * 0.5);
 }
-function calculateSpinTime(speed, distance){
+function calculateSpinAngleInRadians(spinTime, spinAngleStart, spinTimeTotal){
+    var spinAngle = spinAngleStart - (spinAngleStart * easeOut(spinTime, spinTimeTotal));
 
-    var spinTimeTotal = Math.ceil(distance * 20);
-
-    if ((spinTimeTotal / 100) < speed) {
-        spinTimeTotal += speed * (Math.random() + 1.5) * 100;
-    }
-
-    return spinTimeTotal;
-}
-function calculateSpinAngle(spinTime, options){
-    var spinAngle = options.spinAngleStart - easeOut(spinTime, options.spinAngleStart, options.spinTimeTotal);
-
-	return (spinAngle * Math.PI / 180);
+	return (spinAngle * Math.PI / 180); //degrees to radians
 }
 function randomStartAngle(){
-	return Math.random() * 10 + 10;
+    return Math.random() * 10 + 10;
 }
 function calculateRotation(angle, arc){
 	return angle + arc / 2;
@@ -96,8 +82,9 @@ function getArcByAngle(totalArcs, startRadiant, offsetRadian) {
     var arcIndex = Math.floor((360 - degrees) / arcSizeDegrees);
     return arcIndex;
 }
-function easeOut(t, c, d) {
+
+function easeOut(t, d) {
     var ts = (t/=d)*t;
     var tc = ts*t;
-    return c*(tc + -3*ts + 3*t);
+    return (tc + -3*ts + 3*t);
 }

@@ -5,7 +5,7 @@ module.exports = {
     init: initWheel
 };
 
-var spinTimeout = null, wheelSpinning = false, startRadiant = 0;
+var spinTimeout = null, wheelSpinning = false, startAngleRadians = 0;
 var dragStarted = false, dragStartTime = 0, dragEndTime = 0;
 var PhysicsCenter = {};
 
@@ -83,9 +83,9 @@ function checkEndDrag(e, context, cuisines, colors, scaleFactor) {
         dragEndTime = e.timeStamp;
 
         var distance = distanceTravelled();
-        var speed = physics.calculateSpeed(distance, dragEndTime - dragStartTime);
+        var speed = physics.calculateSpinTimeout(distance, dragEndTime - dragStartTime);
         
-        var spinTimeTotal = physics.calculateSpinTime(speed, distance);
+        var spinTimeTotal = 2000;
         var spinAngleStart = physics.randomStartAngle();
 
         var options = {
@@ -100,13 +100,12 @@ function checkEndDrag(e, context, cuisines, colors, scaleFactor) {
 
 function rotateWheel(context, cuisines, colors, scaleFactor, options) {
     var spinTime = options.spinTime + options.speed;
-
     if(spinTime >= options.spinTimeTotal) {
         stopRotateWheel(cuisines);
         return;
     }
     wheelSpinning = true;
-    startRadiant += physics.calculateSpinAngle(spinTime, options);
+    startAngleRadians += physics.calculateSpinAngle(spinTime, options.spinAngleStart, options.spinTimeTotal);
     drawWheel(context, cuisines, colors);
     var opts = {
         spinAngleStart: options.spinAngleStart,
@@ -129,7 +128,7 @@ function drawWheel(context, cuisines, colors) {
 
     for(var i = 0; i < cuisines.length; i++) {
         var weighting = cuisines[i].votes;
-        var angle = startRadiant + arc * accumulatedWeight;
+        var angle = startAngleRadians + arc * accumulatedWeight;
         accumulatedWeight += weighting;
 
         if (weighting != 0) {
@@ -173,7 +172,7 @@ function drawText(context, text, angle, arc, textRadius){
 function stopRotateWheel(cuisines) {
     clearTimeout(spinTimeout);
     var totalVotes = votes.getTotalVotes(cuisines);
-    var selectedIndex = physics.getSelectedCuisineIndex(cuisines, totalVotes, startRadiant);
+    var selectedIndex = physics.getSelectedCuisineIndex(cuisines, totalVotes, startAngleRadians);
     var drawingCanvas = document.getElementById("canvas");
     drawingCanvas.dispatchEvent(new CustomEvent('wheelStopped', {'detail': cuisines[selectedIndex]}));
 
