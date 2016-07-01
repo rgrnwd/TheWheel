@@ -1,4 +1,5 @@
 var physics = require('../public/js/physics.js');
+var sinon = require('sinon');
 var assert = require('chai').assert;
 
 describe('Physics', function() {
@@ -53,6 +54,29 @@ describe('Physics', function() {
         });
     });
 
+	describe('randomStartAngle', function() {
+		it('should return 10 as the minimum', function() {
+			sinon.stub(Math, "random", function(){
+				return 0;
+			});
+			assert.equal(10, physics.randomStartAngle());
+		});
+		it('should return 20 as the maximum', function() {
+			sinon.stub(Math, "random", function(){
+				return 1;
+			});
+			assert.equal(20, physics.randomStartAngle());
+		});
+		it('should return value between 10 and 20', function() {
+			sinon.stub(Math, "random", function(){
+				return 0.75;
+			});
+			assert.equal(17.5, physics.randomStartAngle());
+		});
+		afterEach(function() {
+			Math.random.restore();
+		});
+	});
     describe('getArcByAngle', function(){
 
     	it('should return first arc if only one arc in wheel', function(){
