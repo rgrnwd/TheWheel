@@ -1,17 +1,29 @@
 
 module.exports = {
+    radiansToDegrees : radiansToDegrees,
+    degreesToRadians : degreesToRadians,
 	distanceBetweenPoints : distanceBetweenPoints,
     calculateSpinTimeout : calculateSpinTimeout,
 	randomStartAngle : randomStartAngle,
     calculateSpinAngleInRadians : calculateSpinAngleInRadians,
-	calculateTextStartPoint : calculateTextStartPoint, 
+	calculateStartPoint : calculateStartPoint, 
 	calculateRotation : calculateRotation, 
 	getSelectedCuisineIndex : getSelectedCuisineIndex, 
     getCuisineFromSelectedArc : getCuisineFromSelectedArc,
 	calculateArc : calculateArc,
     getArcByAngle : getArcByAngle,
-    easeOut: easeOut
+    easeOut : easeOut
 };
+
+function degreesToRadians(degrees) {
+    var radians = degrees * Math.PI / 180;
+    return radians;
+}
+
+function radiansToDegrees(radians) {
+    var degrees = radians * 180 / Math.PI;
+    return degrees;
+}
 
 function distanceBetweenPoints(start, end) {
     var a = end.x - start.x;
@@ -31,9 +43,8 @@ function calculateArc(length){
 	return Math.PI / (length * 0.5);
 }
 function calculateSpinAngleInRadians(spinTime, spinAngleStart, spinTimeTotal){
-    var spinAngle = spinAngleStart - (spinAngleStart * this.easeOut(spinTime, spinTimeTotal));
-
-	return (spinAngle * Math.PI / 180); //degrees to radians
+    var spinAngle_DEG = spinAngleStart - (spinAngleStart * this.easeOut(spinTime, spinTimeTotal));
+	return degreesToRadians(spinAngle_DEG);
 }
 function randomStartAngle(){
     return Math.random() * 20 + 5;
@@ -41,15 +52,12 @@ function randomStartAngle(){
 function calculateRotation(angle, arc){
 	return angle + arc / 2;
 }
-function calculateTextStartPoint(angle, arc, radius, physicsCenter){
+function calculateStartPoint(center, radius, theta){
+    //Math.cos & Math.sin use radians
+    var xPoint = center.x + radius * Math.cos(theta);
+    var yPoint = center.y + radius * Math.sin(theta);
 
-    var angleArc = calculateRotation(angle, arc);
-    var cos = Math.cos(angleArc);
-    var sin = Math.sin(angleArc);
-    var startPointX = physicsCenter.X + cos * radius;
-    var startPointY = physicsCenter.Y + sin * radius;
-
-    return { x:startPointX, y: startPointY };
+    return { x : xPoint, y : yPoint };
 }
 
 function getSelectedCuisineIndex(cuisines, totalArcs, startRadiant) {

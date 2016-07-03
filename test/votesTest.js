@@ -1,7 +1,7 @@
 var votes = require('../public/js/votes.js');
 var assert = require('chai').assert;
 
-describe('Physics', function() {
+describe('Votes', function() {
     describe('getTotalVotes', function() {
 
     	it('should have zero votes if array is empty', function(){

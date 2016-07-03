@@ -128,7 +128,7 @@ function drawWheel(context, cuisines, colors) {
     var accumulatedWeight = 0;
 
     var arc = physics.calculateArc(totalWeight); 
-    var outsideRadius = (PhysicsCenter.X) - 20;
+    var outsideRadius = (PhysicsCenter.x) - 20;
     var textRadius = outsideRadius - 60;
 
     for(var i = 0; i < cuisines.length; i++) {
@@ -147,10 +147,12 @@ function drawWheel(context, cuisines, colors) {
 }
 
 function drawText(context, text, radian, arc, radius){
-    var startPoint = physics.calculateTextStartPoint(radian, arc, radius, PhysicsCenter);
+    var theta = physics.calculateRotation(radian, arc);
+
+    var startPoint = physics.calculateStartPoint(PhysicsCenter, radius, theta);
 
     context.translate(startPoint.x, startPoint.y);
-    context.rotate(physics.calculateRotation(radian, arc));
+    context.rotate(theta);
     drawHighlightedText(context, text, 35, 7);
 }
 
@@ -158,8 +160,8 @@ function drawWheelSegment(context, color, radian, arc, outsideRadius) {
 
     context.fillStyle = color;
     context.beginPath();
-    context.arc(PhysicsCenter.X, PhysicsCenter.Y, outsideRadius, radian, radian + arc, false);
-    context.arc(PhysicsCenter.X, PhysicsCenter.Y, 0, radian + arc, radian, true);
+    context.arc(PhysicsCenter.x, PhysicsCenter.y, outsideRadius, radian, radian + arc, false);
+    context.arc(PhysicsCenter.x, PhysicsCenter.y, 0, radian + arc, radian, true);
     context.fill();
     context.save();
 }
@@ -168,8 +170,8 @@ function setCanvasSize(context, scaleFactor){
     var canvasWidth = 500 * scaleFactor;
     var canvasHeight = 500 * scaleFactor;
 
-    PhysicsCenter.X = canvasWidth * 0.5;
-    PhysicsCenter.Y = canvasHeight * 0.5;
+    PhysicsCenter.x = canvasWidth * 0.5;
+    PhysicsCenter.y = canvasHeight * 0.5;
 
     context.clearRect(0,0,canvasWidth,canvasHeight);
 }

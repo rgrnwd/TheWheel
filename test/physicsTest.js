@@ -91,6 +91,57 @@ describe('Physics', function() {
 		});
 	});
 
+    describe('calculateStartPoint', function() 
+    {
+        var center = { x : 0, y : 0 };
+
+        it('should return the origin when radius is set to zero', function() {
+            var theta = 0;
+
+            var point = physics.calculateStartPoint(center, 0, theta);
+            assert.equal(point.x, 0);
+            assert.equal(point.y, 0);
+        });
+
+        it('should return the 1x, 0y when theta is 0 degrees angle is 0 degrees', function() {
+            var theta = physics.degreesToRadians(0);
+            var point = physics.calculateStartPoint(center, 1, theta);
+            assert.equal(point.x, 1);
+            assert.equal(point.y, 0);
+        });
+
+        it('should return the 0x, 5y when theta is 90 degrees, radius is 5', function() {
+            var theta = physics.degreesToRadians(90);
+            var point = physics.calculateStartPoint(center, 5, theta);
+            assert.approximately(point.x, 0, 0.000001);
+            assert.equal(point.y, 5);
+        });
+        
+        it('should return the -50x, 0y when theta is 180 degrees, radius is 100', function() {
+            var theta = physics.degreesToRadians(180);
+            var point = physics.calculateStartPoint(center, 50, theta);
+
+            assert.equal(point.x, -50);
+            assert.approximately(point.y, 0, 0.000001);
+        });
+
+        it('should return the 0x, -100y when theta is 270 degrees, radius is 100', function() {
+            var theta = physics.degreesToRadians(270);
+            var point = physics.calculateStartPoint(center, 100, theta);
+
+            assert.approximately(point.x, 0, 0.000001);
+            assert.equal(point.y, -100);
+        });
+
+        it('should return the 2x, 2y when theta is 45 degrees, radius is 2 sqrt(2)', function() {
+            var theta = physics.degreesToRadians(45);
+            var point = physics.calculateStartPoint(center, 2 * Math.sqrt(2), theta);
+
+            assert.approximately(point.x, 2, 0.000001);
+            assert.approximately(point.y, 2, 0.000001);
+        });
+    });
+
     describe('getArcByAngle', function(){
 
     	it('should return first arc if only one arc in wheel', function(){
