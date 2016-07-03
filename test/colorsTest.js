@@ -53,7 +53,7 @@ describe('Colors', function() {
 		});
 
 		it('should give white if given an invalid color', function(){
-			var htmlColor = colors.rgbToHtml(256, 255, 255);
+			var htmlColor = colors.rgbToHtml(256, 0, 1);
 			assert.equal("#ffffff", htmlColor);
 		});
 	});
