@@ -103,7 +103,7 @@ describe('Physics', function() {
             assert.equal(point.y, 0);
         });
 
-        it('should return the 1x, 0y when theta is 0 degrees angle is 0 degrees', function() {
+        it('should return the 1x, 0y when theta is 0 degrees angle is 1 degrees', function() {
             var theta = physics.degreesToRadians(0);
             var point = physics.calculateStartPoint(center, 1, theta);
             assert.equal(point.x, 1);
@@ -117,7 +117,7 @@ describe('Physics', function() {
             assert.equal(point.y, 5);
         });
         
-        it('should return the -50x, 0y when theta is 180 degrees, radius is 100', function() {
+        it('should return the -50x, 0y when theta is 180 degrees, radius is 50', function() {
             var theta = physics.degreesToRadians(180);
             var point = physics.calculateStartPoint(center, 50, theta);
 
