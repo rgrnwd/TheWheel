@@ -9,6 +9,7 @@ var spinTimeout = null, wheelSpinning = false, startAngleRadians = 0;
 var dragStarted = false, dragStartTime = 0, dragEndTime = 0;
 var PhysicsCenter = {};
 
+var initialSize = 500;
 var mousePositions = [];
 
 function initWheel(cuisines, scaleFactor, colors) {
@@ -128,7 +129,7 @@ function drawWheel(context, cuisines, colors) {
     var accumulatedWeight = 0;
 
     var arc = physics.calculateArc(totalWeight); 
-    var outsideRadius = (PhysicsCenter.x) - 20;
+    var outsideRadius = (PhysicsCenter.x);// - 20;
     var textRadius = outsideRadius - 60;
 
     for(var i = 0; i < cuisines.length; i++) {
@@ -167,13 +168,17 @@ function drawWheelSegment(context, color, radian, arc, outsideRadius) {
 }
 
 function setCanvasSize(context, scaleFactor){
-    var canvasWidth = 500 * scaleFactor;
-    var canvasHeight = 500 * scaleFactor;
+    var canvasWidth = initialSize * scaleFactor;
+    var canvasHeight = initialSize * scaleFactor;
 
-    PhysicsCenter.x = canvasWidth * 0.5;
-    PhysicsCenter.y = canvasHeight * 0.5;
+    var drawingCanvas = document.getElementById("canvas");
+    drawingCanvas.width = canvasWidth;
+    drawingCanvas.height = canvasHeight;
 
-    context.clearRect(0,0,canvasWidth,canvasHeight);
+    PhysicsCenter = physics.calculateCenter(canvasHeight, canvasWidth);
+    console.log(PhysicsCenter);
+
+    context.clearRect(0,0,initialSize,initialSize);
 }
 
 function stopRotateWheel(cuisines) {

@@ -12,7 +12,8 @@ module.exports = {
     getCuisineFromSelectedArc : getCuisineFromSelectedArc,
 	calculateArc : calculateArc,
     getArcByAngle : getArcByAngle,
-    easeOut : easeOut
+    easeOut : easeOut,
+    calculateCenter : calculateCenter
 };
 
 function degreesToRadians(degrees) {
@@ -20,6 +21,15 @@ function degreesToRadians(degrees) {
     return radians;
 }
 
+function calculateCenter(canvasHeight,canvasWidth){
+
+    var physicsCenter = {
+        x : canvasWidth * 0.5,
+        y : canvasHeight * 0.5
+    }
+
+    return physicsCenter;
+}
 function radiansToDegrees(radians) {
     var degrees = radians * 180 / Math.PI;
     return degrees;

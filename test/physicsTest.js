@@ -276,5 +276,22 @@ describe('Physics', function() {
     		assert.equal(expectedArc, result);
     	});
 
-    })
+    });
+
+    describe('calculateCenter', function(){
+
+        it ('should return a center of 250,250 for dimensions 500x500 and scale factor 1', function(){
+
+            var center = physics.calculateCenter(500, 500);
+            assert.equal(250, center.x);
+
+        });
+
+        it ('should return a center of 200,200 for dimensions 400x400 and scale factor 1', function(){
+
+            var center = physics.calculateCenter(400, 400);
+            assert.equal(200, center.x);
+
+        });
+    });
 });

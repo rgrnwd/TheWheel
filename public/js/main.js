@@ -4,18 +4,55 @@ var colors = require('./colors.js');
 var speechBubble = require('./speech_bubble.js');
 
 var scaleFactor = 1;
+var cuisineList;
+var colorsList;
 
 window.onload = function() {
-    loadCuisines();
+    scaleFactor = calculateScaleFactor();
+    loadCuisines(scaleFactor);
 };
+
+window.addEventListener("resize", function(){
+    handleResize();
+});
+
+function handleResize(){
+    
+    var newScaleFactor = calculateScaleFactor();
+    if (scaleFactor != newScaleFactor){
+        scaleFactor = newScaleFactor;
+        wheel.init(cuisineList, scaleFactor, colorsList);
+    }    
+}
+
+function calculateScaleFactor(){
+    var scale = 1;
+
+    var w = window.innerWidth-2; // -2 accounts for the border
+    var h = window.innerHeight-2;
+
+    if (h < 300 || w < 320){
+        scale = 0.5;
+    }
+    else if (h < 500 || w < 400){
+        scale = 0.65;
+    }
+    else if (h < 600 || w < 600){
+        scale = 0.8;
+    }
+    
+    return scale;
+}
 
 function loadCuisines() {
     service.getCuisines().then(function(cuisines) {
+        cuisineList = cuisines;
         var drawingCanvas = document.getElementById("canvas");
         drawingCanvas.addEventListener('wheelStopped', handleWheelStopped, false);
         drawingCanvas.addEventListener('wheelStarted', handleWheelStarted, false);
         var colorsRequired = getCuisinesWithPositiveVoteCount(cuisines);
-        wheel.init(cuisines, scaleFactor, colors.generateColors(colorsRequired));
+        colorsList = colors.generateColors(colorsRequired);
+        wheel.init(cuisines, scaleFactor, colorsList);
     }).catch(function(error) {
         console.log(error);
     });
