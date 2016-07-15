@@ -3,6 +3,7 @@ var wheel = require('./wheel.js');
 var colors = require('./colors.js');
 var speechBubble = require('./speech_bubble.js');
 var moment = require('moment');
+var _ = require('lodash');
 
 var scaleFactor = 1;
 var cuisineList;
@@ -49,16 +50,20 @@ function loadCuisines() {
     service.getCuisines().then(function(cuisines) {
         cuisineList = cuisines;
         removeLastWeeksChoice();
-        getColorsByCuisines(cuisines);
+        getColorsByCuisines(cuisineList);
         addCanvasEvents();
-        wheel.init(cuisines, scaleFactor, colorsList);
+        wheel.init(cuisineList, scaleFactor, colorsList);
     }).catch(function(error) {
         console.log(error);
     });
 }
 
 function removeLastWeeksChoice(){
-    
+    console.log('removing last week choice');
+    console.log(cuisineList);
+    cuisineList = _.sortBy(cuisineList, 'lastSelected');
+    cuisineList.splice(0, 3);
+    console.log(cuisineList);
 }
 function getColorsByCuisines(cuisines){
     var numberOfColorsNeeded = countCuisinesWithPositiveVoteCount(cuisines);
