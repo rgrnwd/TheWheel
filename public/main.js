@@ -71026,18 +71026,30 @@ function calculateScaleFactor(){
 function loadCuisines() {
     service.getCuisines().then(function(cuisines) {
         cuisineList = cuisines;
-        var drawingCanvas = document.getElementById("canvas");
-        drawingCanvas.addEventListener('wheelStopped', handleWheelStopped, false);
-        drawingCanvas.addEventListener('wheelStarted', handleWheelStarted, false);
-        var colorsRequired = getCuisinesWithPositiveVoteCount(cuisines);
-        colorsList = colors.generateColors(colorsRequired);
+        removeLastWeeksChoice();
+        getColorsByCuisines(cuisines);
+        addCanvasEvents();
         wheel.init(cuisines, scaleFactor, colorsList);
     }).catch(function(error) {
         console.log(error);
     });
 }
 
-function getCuisinesWithPositiveVoteCount(cuisines) {
+function removeLastWeeksChoice(){
+    
+}
+function getColorsByCuisines(cuisines){
+    var numberOfColorsNeeded = countCuisinesWithPositiveVoteCount(cuisines);
+    colorsList = colors.generateColors(numberOfColorsNeeded);
+}
+
+function addCanvasEvents(){
+    var drawingCanvas = document.getElementById("canvas");
+    drawingCanvas.addEventListener('wheelStopped', handleWheelStopped, false);
+    drawingCanvas.addEventListener('wheelStarted', handleWheelStarted, false);
+}
+
+function countCuisinesWithPositiveVoteCount(cuisines) {
     var colorsRequired = 0;
 
     for (var i = 0; i < cuisines.length; i++) {
