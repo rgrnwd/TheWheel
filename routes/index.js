@@ -15,9 +15,15 @@ router.get('/cuisines', function(req, res) {
 });
 
 router.post('/cuisines/select/:cuisine', function(req, res) {
-  cuisineService.saveCuisine(req.params.cuisine).then(function(){
+  cuisineService.cuisineAlreadySavedForTheWeek().then(function(selected) {
+    if (!selected) {
+      console.log("Cuisine will be saved as this week's selection");
+      return cuisineService.saveCuisine(req.params.cuisine);
+    }
+    console.log("Cuisine for this week has already been saved");
+  }).then(function () {
     res.status(200).end();
-  }).catch(function(error) {
+  }).catch(function (error) {
     res.status(error).end();
   });
 });
