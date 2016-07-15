@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var config = require('../config/config');
+var cuisineService = require('../app/service/cuisines');
 
 router.get('/cuisines', function(req, res) {
   var Cuisine = mongoose.model('cuisine');
@@ -14,23 +15,10 @@ router.get('/cuisines', function(req, res) {
 });
 
 router.post('/cuisines/select/:cuisine', function(req, res) {
-  var selectedCuisine = req.params.cuisine;
-  console.log(selectedCuisine);
-  var Cuisine = mongoose.model('cuisine');
-  Cuisine.findById(selectedCuisine, function(err, cuisine) {
-    if (err) {
-      console.error(err);
-      res.status(400).end();
-    } else {
-      cuisine.lastSelected = new Date();
-      cuisine.save(function(err) {
-        if(err) {
-          console.error("Error saving cuisine", err);
-          res.status(500).end();
-        }
-      });
-      res.status(200).end();
-    }
+  cuisineService.saveCuisine(req.params.cuisine).then(function(){
+    res.status(200).end();
+  }).catch(function(error) {
+    res.status(error).end();
   });
 });
 
