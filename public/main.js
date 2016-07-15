@@ -71275,6 +71275,8 @@ var PhysicsCenter = {};
 var initialSize = 500;
 var mousePositions = [];
 
+var audio = new Audio('music/Wheel.mp3');
+
 function initWheel(cuisines, scaleFactor, colors) {
     var drawingCanvas = document.getElementById("canvas");
     if (drawingCanvas.getContext) {
@@ -71346,6 +71348,7 @@ function checkEndDrag(e, context, cuisines, colors, scaleFactor) {
         dragStarted = false;
         dragEndTime = e.timeStamp;
 
+        playWheelMusic(true);
         rotateWheel(context, cuisines, colors, scaleFactor, getSpinOptions(dragEndTime));
     }
 }
@@ -71368,6 +71371,7 @@ function getSpinOptions(dragEndTime){
     return spinOptions;
 }
 function rotateWheel(context, cuisines, colors, scaleFactor, options) {
+
     var spinTime = options.spinTime + options.speed;
     if(spinTime >= options.spinTimeTotal) {
         stopRotateWheel(cuisines);
@@ -71384,6 +71388,17 @@ function rotateWheel(context, cuisines, colors, scaleFactor, options) {
     };
 
     spinTimeout = setTimeout(function() {rotateWheel(context, cuisines, colors, scaleFactor, opts)}, options.speed);
+}
+
+function playWheelMusic(play){
+
+    if (play){
+        audio.play();
+    }
+    else{
+        audio.pause();
+        audio.currentTime = 0;
+    }
 }
 
 function drawWheel(context, cuisines, colors) {
@@ -71445,6 +71460,7 @@ function setCanvasSize(context, scaleFactor){
 }
 
 function stopRotateWheel(cuisines) {
+    playWheelMusic(false);
     clearTimeout(spinTimeout);
     var totalVotes = votes.getTotalVotes(cuisines);
     var selectedIndex = physics.getSelectedCuisineIndex(cuisines, totalVotes, startAngleRadians);
