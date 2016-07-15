@@ -2,6 +2,7 @@ var service = require('./service.js');
 var wheel = require('./wheel.js');
 var colors = require('./colors.js');
 var speechBubble = require('./speech_bubble.js');
+var moment = require('moment');
 
 var scaleFactor = 1;
 var cuisineList;

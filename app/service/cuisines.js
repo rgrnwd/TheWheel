@@ -30,7 +30,10 @@ function cuisineAlreadySavedForTheWeek() {
     console.log(startOfWeek.format());
     return Cuisine.findAsync().then(function(cuisines) {
         var selectedCuisine = _.find(cuisines, function(cuisine) {
-            return cuisine.lastSelected.getTime() > startOfWeekInMillis;
+            if (cuisine.lastSelected) {
+                return cuisine.lastSelected.getTime() > startOfWeekInMillis;
+            }
+            return false;
         });
         return selectedCuisine ? true : false;
     }).catch(function(err) {

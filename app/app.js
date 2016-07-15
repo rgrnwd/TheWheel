@@ -37,10 +37,10 @@ cuisineModel.find(function(err, cuisines) {
     // Un-comment this section to refresh cuisine list!
     // =========== ============ ============ ============
 
-    // cuisineModel.remove({}, function(err) {
-    //    console.log('collection removed');
-    //    populateCuisines();
-    // });
+    cuisineModel.remove({}, function(err) {
+       console.log('collection removed');
+       populateCuisines();
+    });
   }
   else {
     populateCuisines();
