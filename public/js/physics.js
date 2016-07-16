@@ -60,7 +60,7 @@ function randomStartAngle(){
     return Math.random() * 20 + 5;
 }
 function calculateRotation(angle, arc){
-	return angle + arc / 2;
+	return angle + arc;
 }
 function calculateStartPoint(center, radius, theta){
     //Math.cos & Math.sin use radians

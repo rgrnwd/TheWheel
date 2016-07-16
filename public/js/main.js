@@ -9,6 +9,8 @@ var scaleFactor = 1;
 var cuisineList;
 var colorsList;
 
+var audio = new Audio('music/Wheel.mp3');
+
 window.onload = function() {
     scaleFactor = calculateScaleFactor();
     loadCuisines(scaleFactor);
@@ -83,7 +85,6 @@ function sortCuisinesByLastSelected(){
     }).reverse();
 }
 function removeLastWeeksChoice(){
-
     cuisineList.splice(0, 3);
 }
 
@@ -110,15 +111,17 @@ function countCuisinesWithPositiveVoteCount(cuisines) {
     return colorsRequired;
 }
 
+function handleWheelStarted() {
+    speechBubble.hideSpeechBubble();
+    playWheelMusic(true);
+    showCheer(true);
+}
+
 function handleWheelStopped(e) {
     speechBubble.showSelectedCuisine(e.detail);
     saveCuisine(e.detail);
+    playWheelMusic(false);
     showCheer(false);
-}
-
-function handleWheelStarted() {
-    speechBubble.hideSpeechBubble();
-    showCheer(true);
 }
 
 function saveCuisine(cuisine) {
@@ -140,3 +143,12 @@ function showCheer(show){
     }
 }
 
+function playWheelMusic(play){
+    if (play){
+        audio.play();
+    }
+    else{
+        audio.pause();
+        audio.currentTime = 0;
+    }
+}
