@@ -2,14 +2,13 @@ var service = require('./service.js');
 var wheel = require('./wheel.js');
 var colors = require('./colors.js');
 var speechBubble = require('./speech_bubble.js');
+var audioTrack = require('./audio.js');
 var moment = require('moment');
 var _ = require('lodash');
 
 var scaleFactor = 1;
 var cuisineList;
 var colorsList;
-
-var audio = new Audio('music/Wheel.mp3');
 
 window.onload = function() {
     scaleFactor = calculateScaleFactor();
@@ -113,14 +112,14 @@ function countCuisinesWithPositiveVoteCount(cuisines) {
 
 function handleWheelStarted() {
     speechBubble.hideSpeechBubble();
-    playWheelMusic(true);
+    audioTrack.play(true);
     showCheer(true);
 }
 
 function handleWheelStopped(e) {
     speechBubble.showSelectedCuisine(e.detail);
     saveCuisine(e.detail);
-    playWheelMusic(false);
+    audioTrack.play(false);
     showCheer(false);
 }
 
@@ -140,15 +139,5 @@ function showCheer(show){
         document.getElementById("cheer-right").className = "cheerleader right hidden ";
         document.getElementById("cheer-left").className = "cheerleader left hidden";
         document.getElementById("cheer-bottom").className = "cheerleader bottom hidden";
-    }
-}
-
-function playWheelMusic(play){
-    if (play){
-        audio.play();
-    }
-    else{
-        audio.pause();
-        audio.currentTime = 0;
     }
 }
