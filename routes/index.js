@@ -14,6 +14,13 @@ router.get('/cuisines', function(req, res) {
   });
 });
 
+router.get('/cuisineSelected', function(req, res){
+
+  cuisineService.cuisineAlreadySavedForTheWeek().then(function(selected){
+    res.json(selected);
+  });
+});
+
 router.post('/cuisines/select/:cuisine', function(req, res) {
   cuisineService.cuisineAlreadySavedForTheWeek().then(function(selected) {
     if (!selected) {

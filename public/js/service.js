@@ -4,7 +4,8 @@ var url = require('./url.js');
 
 module.exports = {
     getCuisines: getCuisines,
-    saveCuisineForTheWeek: saveCuisineForTheWeek
+    saveCuisineForTheWeek: saveCuisineForTheWeek,
+    choiceMadeThisWeek : choiceMadeThisWeek
 };
 
 function getCuisines() {
@@ -12,6 +13,14 @@ function getCuisines() {
         uri: url.getBaseUrl() + '/cuisines',
         json: true
     };
+    return requestPromise.get(options);
+}
+
+function choiceMadeThisWeek(){
+    var options = {
+        uri: url.getBaseUrl() + '/cuisineSelected',
+        json: true
+    }
     return requestPromise.get(options);
 }
 

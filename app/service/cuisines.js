@@ -25,12 +25,18 @@ function cuisineAlreadySavedForTheWeek() {
     Cuisine = Promise.promisifyAll(Cuisine);
     Promise.promisifyAll(Cuisine.prototype);
 
-    var startOfWeek = moment().startOf('week'); //Sunday midnight
+    var startOfWeek = moment().startOf('week').subtract(2, 'days'); //Friday 
+    if (moment().day() >= 5) 
+        startOfWeek = startOfWeek.add(7, 'days');
+
+    console.log('start of week is ', startOfWeek.toDate());
+
     var startOfWeekInMillis = startOfWeek.valueOf();
     console.log(startOfWeek.format());
     return Cuisine.findAsync().then(function(cuisines) {
         var selectedCuisine = _.find(cuisines, function(cuisine) {
             if (cuisine.lastSelected) {
+                console.log('cuisine last selected on: ', cuisine.lastSelected)
                 return cuisine.lastSelected.getTime() > startOfWeekInMillis;
             }
             return false;

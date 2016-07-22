@@ -49,22 +49,44 @@ function calculateScaleFactor(){
 function loadCuisines() {
     service.getCuisines().then(function(cuisines) {
         cuisineList = cuisines;
-        removeLastWeeksChoice();
-        getColorsByCuisines(cuisineList);
-        addCanvasEvents();
-        wheel.init(cuisineList, scaleFactor, colorsList);
+        analyseLastWeeksChoice().then(function(updatedCuisines){
+            getColorsByCuisines(updatedCuisines);
+            addCanvasEvents();
+            wheel.init(updatedCuisines, scaleFactor, colorsList);
+        });
     }).catch(function(error) {
         console.log(error);
     });
 }
 
-function removeLastWeeksChoice(){
-    console.log('removing last week choice');
-    console.log(cuisineList);
-    cuisineList = _.sortBy(cuisineList, 'lastSelected');
-    cuisineList.splice(0, 3);
-    console.log(cuisineList);
+function analyseLastWeeksChoice(){
+    sortCuisinesByLastSelected();
+
+    return service.choiceMadeThisWeek().then(function (response){
+        if (response){
+            fillCuisineWheelWithSelectedChoice();
+        }
+        else {
+            removeLastWeeksChoice();
+        }
+        return cuisineList;
+    }); 
 }
+function fillCuisineWheelWithSelectedChoice(){
+    cuisineList.forEach(function(part, index, theArray) {
+      theArray[index] = cuisineList[0];
+    });
+}
+function sortCuisinesByLastSelected(){
+    cuisineList = _.sortBy(cuisineList, function(cuisine){
+        return cuisine.lastSelected ? new Date(cuisine.lastSelected).getTime() : 0;
+    }).reverse();
+}
+function removeLastWeeksChoice(){
+
+    cuisineList.splice(0, 3);
+}
+
 function getColorsByCuisines(cuisines){
     var numberOfColorsNeeded = countCuisinesWithPositiveVoteCount(cuisines);
     colorsList = colors.generateColors(numberOfColorsNeeded);
@@ -101,7 +123,6 @@ function handleWheelStarted() {
 
 function saveCuisine(cuisine) {
     service.saveCuisineForTheWeek(cuisine).then(function() {
-        console.log(cuisine.name, "saved as this week's choice");
     }).catch(function(error) {
         console.log(error);
     });
