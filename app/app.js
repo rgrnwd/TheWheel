@@ -14,7 +14,7 @@ var cuisines = require('../db/cuisines');
  * Get port from environment and store in Express.
  */
 
-/** 
+/**
 * Connect to Mongodb
 */
 mongoose.connect(config.db);
@@ -23,24 +23,24 @@ var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 var CuisineSchema = mongoose.Schema({
-    name: String, 
-    emotion: String, 
+    name: String,
+    emotion: String,
     lastSelected: Date,
     votes: Number
-  }, 
+  },
   {collection: 'Cuisines'});
 var cuisineModel = mongoose.model('cuisine', CuisineSchema);
 cuisineModel.find(function(err, cuisines) {
   if(cuisines && cuisines.length > 0) {
-    
+
     // =========== ============ ============ ============
     // Un-comment this section to refresh cuisine list!
     // =========== ============ ============ ============
 
-    // cuisineModel.remove({}, function(err) {
-    //    console.log('collection removed');
-    //    populateCuisines();
-    // });
+    cuisineModel.remove({}, function(err) {
+       console.log('collection removed');
+       populateCuisines();
+    });
   }
   else {
     populateCuisines();
