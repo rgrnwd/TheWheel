@@ -35,6 +35,10 @@ router.post('/cuisines/select/:cuisine', function(req, res) {
   });
 });
 
+router.get('/admin', function(req, res) {
+  res.render('admin.html', { title: 'The Wheel' });
+})
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index.html', { title: 'The Wheel' });
